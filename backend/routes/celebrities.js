@@ -42,6 +42,15 @@ router.post('/', upload.single('image'), async (req, res) => {
     if (req.session.user) {
         celebData.createdBy = req.session.user.id;
     }
+
+    // Parse JSON strings from FormData
+    if (typeof celebData.milestones === 'string') {
+        try { celebData.milestones = JSON.parse(celebData.milestones); } catch (e) { console.error("Milestones parse error:", e); }
+    }
+    if (typeof celebData.stats === 'string') {
+        try { celebData.stats = JSON.parse(celebData.stats); } catch (e) { console.error("Stats parse error:", e); }
+    }
+
     const celeb = new Celebrity(celebData);
     try {
         const newCeleb = await celeb.save();
@@ -59,6 +68,14 @@ router.put('/:id', upload.single('image'), async (req, res) => {
         }
         if (req.session.user) {
             updateData.createdBy = req.session.user.id;
+        }
+
+        // Parse JSON strings from FormData
+        if (typeof updateData.milestones === 'string') {
+            try { updateData.milestones = JSON.parse(updateData.milestones); } catch (e) { console.error("Milestones parse error:", e); }
+        }
+        if (typeof updateData.stats === 'string') {
+            try { updateData.stats = JSON.parse(updateData.stats); } catch (e) { console.error("Stats parse error:", e); }
         }
 
         // Heal corrupted data (remove invalid string entries if passed)

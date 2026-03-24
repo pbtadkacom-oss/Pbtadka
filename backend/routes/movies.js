@@ -44,6 +44,15 @@ router.post('/', upload.single('image'), async (req, res) => {
     if (req.session.user) {
         movieData.createdBy = req.session.user.id;
     }
+
+    // Parse JSON strings from FormData
+    if (typeof movieData.performance === 'string') {
+        try { movieData.performance = JSON.parse(movieData.performance); } catch (e) { console.error("Performance parse error:", e); }
+    }
+    if (typeof movieData.cast === 'string') {
+        try { movieData.cast = JSON.parse(movieData.cast); } catch (e) { console.error("Cast parse error:", e); }
+    }
+
     const movie = new Movie(movieData);
     try {
         const newMessage = await movie.save();
@@ -62,6 +71,14 @@ router.put('/:id', upload.single('image'), async (req, res) => {
         }
         if (req.session.user) {
             updateData.createdBy = req.session.user.id;
+        }
+
+        // Parse JSON strings from FormData
+        if (typeof updateData.performance === 'string') {
+            try { updateData.performance = JSON.parse(updateData.performance); } catch (e) { console.error("Performance parse error:", e); }
+        }
+        if (typeof updateData.cast === 'string') {
+            try { updateData.cast = JSON.parse(updateData.cast); } catch (e) { console.error("Cast parse error:", e); }
         }
 
         // Heal corrupted data (remove invalid string entries if passed)
