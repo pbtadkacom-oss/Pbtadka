@@ -24,7 +24,7 @@ const ManageUpcoming = () => {
     title: '', image: '', rating: '', genre: '', year: new Date().getFullYear().toString(), 
     overview: '', director: '', runtime: '', certification: '', 
     performance: { day1: '', weekend: '', status: 'Upcoming' }, industry: 'Pollywood',
-    fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', cast: [], slug: '', photos: []
+    fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', cast: [], slug: '', photos: [], coverImage: ''
   });
 
   const [showForm, setShowForm] = useState(false);
@@ -102,7 +102,8 @@ const ManageUpcoming = () => {
       ...movie,
       performance: movie.performance || { day1: '', weekend: '', status: 'Upcoming' },
       cast: movie.cast || [],
-      photos: movie.photos || []
+      photos: movie.photos || [],
+      coverImage: movie.coverImage || ''
     });
     setIsCustomIndustry(movie.industry && !INDUSTRIES.includes(movie.industry));
     setShowForm(true);
@@ -289,16 +290,26 @@ const ManageUpcoming = () => {
           {activeFormTab === 'Media' && (
             <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="space-y-3">
-                    <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Main Banner Movie Poster</label>
+                    <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Main Banner Movie Poster (2:3 aspect)</label>
                     <div className="flex gap-2">
                         <button type="button" onClick={() => setImageSource('url')} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest ${imageSource === 'url' ? 'bg-primary-red text-white' : 'bg-gray-100 text-gray-500'}`}>URL</button>
                         <button type="button" onClick={() => setImageSource('file')} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest ${imageSource === 'file' ? 'bg-primary-red text-white' : 'bg-gray-100 text-gray-500'}`}>Upload</button>
                     </div>
                     {imageSource === 'url' ? (
-                        <input placeholder="Image URL" className="p-3 border rounded-xl w-full" value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} />
+                        <input placeholder="Poster URL" className="p-3 border rounded-xl w-full" value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} />
                     ) : (
                         <input type="file" onChange={e => setSelectedFile(e.target.files[0])} className="w-full text-xs font-bold" />
                     )}
+                </div>
+
+                <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-black uppercase text-slate-400 ml-1">Hero Cover Image (16:9 aspect)</label>
+                    <input 
+                        placeholder="Cover Image URL (Shows as background)" 
+                        className="p-3 border rounded-xl outline-none" 
+                        value={formData.coverImage} 
+                        onChange={e => setFormData({...formData, coverImage: e.target.value})} 
+                    />
                 </div>
 
                 <div className="flex flex-col gap-1">

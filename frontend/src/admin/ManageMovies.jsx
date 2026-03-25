@@ -7,7 +7,7 @@ import Modal from '../components/Modal';
 const INDUSTRIES = ["Pollywood", "Bollywood", "Hollywood", "Tollywood", "Kollywood", "Mollywood", "Sandalwood", "South Indian", "Haryanvi", "Bhojpuri"];
 
 const ManageMovies = () => {
-    const { user, movies, addMovie, updateMovie, deleteMovie, deleteMovieComment, updateMovieComment } = useData();
+  const { user, movies, addMovie, updateMovie, deleteMovie, deleteMovieComment, updateMovieComment } = useData();
 
   const quillModules = {
     toolbar: [
@@ -21,13 +21,15 @@ const ManageMovies = () => {
 
   const [editingIndex, setEditingIndex] = useState(null);
   const [formData, setFormData] = useState({ 
-    title: '', image: '', rating: '', genre: '', year: '', 
+    title: '', image: '', coverImage: '', rating: '', genre: '', year: new Date().getFullYear().toString(), 
     overview: '', director: '', runtime: '', certification: '', 
-    performance: { day1: '', weekend: '', status: '' }, industry: 'Pollywood',
-    fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', cast: [], slug: ''
+    performance: { day1: '', weekend: '', status: 'Blockbuster' }, industry: 'Pollywood',
+    fullStory: '', trailerUrl: '', likes: 0, releaseDate: new Date().toISOString().split('T')[0], cast: [], slug: '', photos: []
   });
+
   const [showForm, setShowForm] = useState(false);
-  const [imageSource, setImageSource] = useState('url'); // 'url' or 'file'
+  const [activeFormTab, setActiveFormTab] = useState('Info'); 
+  const [imageSource, setImageSource] = useState('url'); 
   const [selectedFile, setSelectedFile] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('newest');
@@ -36,6 +38,7 @@ const ManageMovies = () => {
   const [selectedMovieId, setSelectedMovieId] = useState(null);
   const selectedMovie = movies.find(m => m._id === selectedMovieId);
 
+  // Released movies only (release date is today or past)
   const releasedMovies = movies.filter(movie => !movie.releaseDate || new Date(movie.releaseDate) <= new Date());
 
   const filteredMovies = releasedMovies
@@ -44,22 +47,19 @@ const ManageMovies = () => {
       movie.genre.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
-      if (sortBy === 'newest') return new Date(b.createdAt || b.year) - new Date(a.createdAt || a.year);
-      if (sortBy === 'oldest') return new Date(a.createdAt || a.year) - new Date(b.createdAt || b.year);
+      if (sortBy === 'newest') return new Date(b.createdAt) - new Date(a.createdAt);
       if (sortBy === 'title') return a.title.localeCompare(b.title);
-      if (sortBy === 'rating') return b.rating - a.rating;
       return 0;
     });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     const data = new FormData();
     const fieldsToExclude = ['comments', 'createdBy', '_id', 'createdAt', 'updatedAt', '__v'];
 
     Object.keys(formData).forEach(key => {
         if (!fieldsToExclude.includes(key)) {
-            if (key === 'performance' || key === 'cast') {
+            if (key === 'performance' || key === 'cast' || key === 'photos') {
                 data.append(key, JSON.stringify(formData[key]));
             } else if (key !== 'image' || imageSource === 'url') {
                 data.append(key, formData[key]);
@@ -73,7 +73,6 @@ const ManageMovies = () => {
 
     if (editingIndex !== null) {
       await updateMovie(releasedMovies[editingIndex]._id, data);
-      setEditingIndex(null);
     } else {
       await addMovie(data);
     }
@@ -82,77 +81,61 @@ const ManageMovies = () => {
 
   const resetForm = () => {
     setFormData({ 
-      title: '', image: '', rating: '', genre: '', year: '', 
+      title: '', image: '', coverImage: '', rating: '', genre: '', year: new Date().getFullYear().toString(), 
       overview: '', director: '', runtime: '', certification: '', 
-      performance: { day1: '', weekend: '', status: '' }, industry: 'Pollywood',
-      fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', cast: [], slug: ''
+      performance: { day1: '', weekend: '', status: 'Blockbuster' }, industry: 'Pollywood',
+      fullStory: '', trailerUrl: '', likes: 0, releaseDate: new Date().toISOString().split('T')[0], cast: [], slug: '', photos: []
     });
     setSelectedFile(null);
     setImageSource('url');
     setShowForm(false);
+    setEditingIndex(null);
+    setActiveFormTab('Info');
   };
 
-  const handleEdit = (realIndex) => {
-    const movie = movies.find(m => m._id === realIndex);
-    const releasedIdx = releasedMovies.findIndex(m => m._id === realIndex);
-    setEditingIndex(releasedIdx);
+  const handleEdit = (id) => {
+    const movie = movies.find(m => m._id === id);
+    const relIdx = releasedMovies.findIndex(m => m._id === id);
+    setEditingIndex(relIdx);
     setFormData({
       ...movie,
-      performance: movie.performance || { day1: '', weekend: '', status: '' },
-      cast: movie.cast || []
+      performance: movie.performance || { day1: '', weekend: '', status: 'Blockbuster' },
+      cast: movie.cast || [],
+      photos: movie.photos || [],
+      coverImage: movie.coverImage || ''
     });
     setIsCustomIndustry(movie.industry && !INDUSTRIES.includes(movie.industry));
     setShowForm(true);
+    setActiveFormTab('Info');
   };
 
   return (
     <div className="space-y-6 relative">
       <div className="sticky top-0 z-30 bg-gray-100/80 backdrop-blur-md pb-4 pt-2 -mt-2">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-          <h2 className="text-xl font-bold text-text-dark flex items-center gap-2">
-            <i className="fas fa-film text-primary-red"></i> Manage Released Movies
-          </h2>
+          <div>
+            <h2 className="text-xl font-bold text-text-dark flex items-center gap-2">
+                <i className="fas fa-video text-primary-red"></i> Released Movies
+            </h2>
+            <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Manage film library</p>
+          </div>
           <div className="flex flex-wrap w-full md:w-auto gap-2">
-            <div className="relative flex-1 md:w-64 flex gap-2">
-              <div className="relative flex-1">
-                <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input 
-                  type="text" 
-                  placeholder="Search movies..." 
-                  className="pl-10 pr-4 py-2 border rounded-lg w-full outline-none focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
+            <div className="relative flex-1 md:w-64">
+              <i className="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <input 
+                type="text" 
+                placeholder="Search movies..." 
+                className="pl-10 pr-4 py-2 border rounded-lg w-full outline-none focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
-            <div className="flex gap-2">
-              <select 
-                className="px-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-primary-red/20 bg-white font-semibold text-sm"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-              >
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-                <option value="title">Title (A-Z)</option>
-                <option value="rating">Top Rated</option>
-              </select>
-              <button 
-                onClick={() => { 
-                  setShowForm(true); 
-                  setEditingIndex(null); 
-                  setFormData({ 
-                    title: '', image: '', rating: '', genre: '', year: '', 
-                    overview: '', director: '', runtime: '', certification: '', 
-                    performance: { day1: '', weekend: '', status: '' }, industry: 'Pollywood',
-                    fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', slug: ''
-                  }); 
-                  setIsCustomIndustry(false);
-                }}
-                className="bg-primary-red text-white px-4 py-2 rounded-lg font-bold hover:bg-secondary-red transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-primary-red/20"
-              >
-                <i className="fas fa-plus"></i> <span className="hidden sm:inline">Add Movie</span>
-              </button>
-            </div>
+            <button 
+              onClick={() => { setShowForm(true); setEditingIndex(null); }}
+              className="bg-primary-red text-white px-4 py-2 rounded-lg font-bold hover:bg-secondary-red transition-all flex items-center gap-2 shadow-lg shadow-primary-red/20"
+            >
+              <i className="fas fa-plus"></i> <span className="text-xs uppercase tracking-widest">Post Movie</span>
+            </button>
           </div>
         </div>
       </div>
@@ -160,330 +143,199 @@ const ManageMovies = () => {
       <Modal 
         isOpen={showForm} 
         onClose={() => setShowForm(false)} 
-        title={editingIndex !== null ? 'Edit Movie' : 'Add New Movie'}
+        title={editingIndex !== null ? 'Update Movie Data' : 'Post New Movie'}
       >
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input 
-            placeholder="Title" className="p-2 border rounded" required
-            value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})}
-          />
-          <input 
-            placeholder="URL Slug (e.g. carry-on-jatta-3)" className="p-2 border rounded bg-yellow-50 font-bold px-3"
-            value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})}
-          />
-          <div className="md:col-span-2 space-y-2">
-            <div className="flex gap-4 mb-2">
-              <button 
-                type="button"
-                onClick={() => setImageSource('url')}
-                className={`text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-lg transition-all ${imageSource === 'url' ? 'bg-primary-red text-white shadow-lg shadow-primary-red/20' : 'bg-gray-100 text-gray-500'}`}
-              >
-                Image URL
-              </button>
-              <button 
-                type="button"
-                onClick={() => setImageSource('file')}
-                className={`text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-lg transition-all ${imageSource === 'file' ? 'bg-primary-red text-white shadow-lg shadow-primary-red/20' : 'bg-gray-100 text-gray-500'}`}
-              >
-                Upload File
-              </button>
-            </div>
-            
-            {imageSource === 'url' ? (
-              <input 
-                placeholder="Image URL" className="p-2 border rounded w-full" required
-                value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})}
-              />
-            ) : (
-              <div className="flex flex-col gap-2 p-4 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50">
+        <div className="flex border-b mb-6 overflow-x-auto no-scrollbar">
+            {['Info', 'Story', 'Media', 'Stats', 'Cast'].map(tab => (
+                <button 
+                    key={tab}
+                    onClick={() => setActiveFormTab(tab)}
+                    className={`px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-all ${activeFormTab === tab ? 'border-b-2 border-primary-red text-primary-red' : 'text-gray-400 hover:text-slate-600'}`}
+                >
+                    {tab}
+                </button>
+            ))}
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {activeFormTab === 'Info' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Title</label>
+                    <input 
+                        placeholder="Movie Title" className="p-3 border rounded-xl focus:ring-2 focus:ring-primary-red/20 outline-none font-bold" required
+                        value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})}
+                    />
+                </div>
+                <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-black uppercase text-gray-400 ml-1">URL Slug</label>
+                    <input 
+                        placeholder="slug-name-here" className="p-3 border rounded-xl bg-yellow-50 focus:ring-2 focus:ring-primary-red/20 outline-none font-bold italic"
+                        value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})}
+                    />
+                </div>
                 <input 
-                  type="file" 
-                  accept="image/*"
-                  onChange={e => setSelectedFile(e.target.files[0])}
-                  className="text-xs font-medium text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-primary-red file:text-white hover:file:bg-secondary-red"
-                  required={!editingIndex}
+                    placeholder="Genre" className="p-3 border rounded-xl outline-none" required
+                    value={formData.genre} onChange={e => setFormData({...formData, genre: e.target.value})}
                 />
-                {selectedFile && <p className="text-[10px] font-bold text-green-600 uppercase tracking-widest">Selected: {selectedFile.name}</p>}
-              </div>
-            )}
-          </div>
-          <input 
-            placeholder="Genre" className="p-2 border rounded" required
-            value={formData.genre} onChange={e => setFormData({...formData, genre: e.target.value})}
-          />
-          <div className="flex gap-2">
-            <input 
-              placeholder="Year" className="p-2 border rounded w-1/2" required type="number"
-              value={formData.year} onChange={e => setFormData({...formData, year: e.target.value})}
-            />
-            <input 
-              placeholder="Rating (e.g. 8.5)" className="p-2 border rounded w-1/2" required type="number" step="0.1"
-              value={formData.rating} onChange={e => setFormData({...formData, rating: e.target.value})}
-            />
-          </div>
-          <div className="flex flex-col gap-2">
-            <select 
-              className="p-2 border rounded font-semibold text-sm outline-none focus:ring-2 focus:ring-primary-red/20"
-              value={isCustomIndustry ? 'Custom' : formData.industry} 
-              onChange={e => {
-                if (e.target.value === 'Custom') {
-                  setIsCustomIndustry(true);
-                  setFormData({...formData, industry: ''});
-                } else {
-                  setIsCustomIndustry(false);
-                  setFormData({...formData, industry: e.target.value});
-                }
-              }}
-            >
-              {INDUSTRIES.map(ind => (
-                <option key={ind} value={ind}>{ind}</option>
-              ))}
-              <option value="Custom">Other (Add Manually...)</option>
-            </select>
-            {isCustomIndustry && (
-              <input 
-                placeholder="Type industry name..." 
-                className="p-2 border rounded text-sm focus:ring-2 focus:ring-primary-red/20 outline-none px-3"
-                value={formData.industry}
-                onChange={e => setFormData({...formData, industry: e.target.value})}
-                autoFocus
-              />
-            )}
-          </div>
-          <input 
-            placeholder="Director" className="p-2 border rounded"
-            value={formData.director} onChange={e => setFormData({...formData, director: e.target.value})}
-          />
-          <div className="flex gap-2">
-            <input 
-              placeholder="Runtime (e.g. 2h 30m)" className="p-2 border rounded w-1/2"
-              value={formData.runtime} onChange={e => setFormData({...formData, runtime: e.target.value})}
-            />
-            <input 
-              placeholder="Certification (e.g. U/A)" className="p-2 border rounded w-1/2"
-              value={formData.certification} onChange={e => setFormData({...formData, certification: e.target.value})}
-            />
-          </div>
-          <textarea 
-            placeholder="Short Overview" className="p-2 border rounded md:col-span-2" rows="2"
-            value={formData.overview} onChange={e => setFormData({...formData, overview: e.target.value})}
-          />
-          <div className="md:col-span-2">
-            <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Detailed Story (Rich Text)</label>
-            <ReactQuill 
-              theme="snow"
-              value={formData.fullStory}
-              onChange={value => setFormData({...formData, fullStory: value})}
-              modules={quillModules}
-              className="bg-white rounded border border-gray-200"
-            />
-          </div>
-          <div className="flex gap-2">
-            <input 
-                placeholder="Trailer URL (YouTube)" className="p-2 border rounded w-1/2"
-                value={formData.trailerUrl} onChange={e => setFormData({...formData, trailerUrl: e.target.value})}
-            />
-            <div className="w-1/2 flex flex-col gap-1">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Like Counter (Override)</label>
-                <input 
-                type="number"
-                placeholder="Likes" className="p-2 border rounded w-full bg-slate-50 font-bold"
-                value={formData.likes} onChange={e => setFormData({...formData, likes: parseInt(e.target.value) || 0})}
-                />
+                <div className="grid grid-cols-2 gap-2">
+                    <input 
+                        placeholder="Year" className="p-3 border rounded-xl outline-none" required type="number"
+                        value={formData.year} onChange={e => setFormData({...formData, year: e.target.value})}
+                    />
+                    <input 
+                        placeholder="Rating" className="p-3 border rounded-xl outline-none" type="number" step="0.1" required
+                        value={formData.rating} onChange={e => setFormData({...formData, rating: e.target.value})}
+                    />
+                </div>
+                <select 
+                    className="p-3 border rounded-xl outline-none font-bold text-sm"
+                    value={isCustomIndustry ? 'Custom' : formData.industry} 
+                    onChange={e => {
+                        if (e.target.value === 'Custom') { setIsCustomIndustry(true); setFormData({...formData, industry: ''}); }
+                        else { setIsCustomIndustry(false); setFormData({...formData, industry: e.target.value}); }
+                    }}
+                >
+                    {INDUSTRIES.map(ind => <option key={ind} value={ind}>{ind}</option>)}
+                    <option value="Custom">Custom...</option>
+                </select>
+                {isCustomIndustry && (
+                    <input placeholder="Enter industry..." className="p-2 border rounded-lg mt-1 outline-none px-3" value={formData.industry} onChange={e => setFormData({...formData, industry: e.target.value})} />
+                )}
+                <input placeholder="Director" className="p-3 border rounded-xl" value={formData.director} onChange={e => setFormData({...formData, director: e.target.value})} />
+                <input placeholder="Runtime" className="p-3 border rounded-xl" value={formData.runtime} onChange={e => setFormData({...formData, runtime: e.target.value})} />
+                <input placeholder="Certification" className="p-3 border rounded-xl" value={formData.certification} onChange={e => setFormData({...formData, certification: e.target.value})} />
             </div>
-          </div>
-          {/* Release Date for released movies is optional or historical */}
-            <div className="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1">
-                        <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Release Date (Historical)</label>
-                        <input 
-                            type="date" 
-                            className="p-2 border rounded font-bold text-slate-700 outline-none focus:ring-2 focus:ring-primary-red/20"
-                            value={formData.releaseDate ? new Date(formData.releaseDate).toISOString().split('T')[0] : ''} 
-                            onChange={e => setFormData({...formData, releaseDate: e.target.value})}
-                        />
+          )}
+
+          {activeFormTab === 'Story' && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                <textarea 
+                    placeholder="Synopsis" className="p-3 border rounded-xl w-full min-h-[100px] outline-none"
+                    value={formData.overview} onChange={e => setFormData({...formData, overview: e.target.value})}
+                />
+                <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Full Article / Highlights</label>
+                    <ReactQuill 
+                        theme="snow"
+                        value={formData.fullStory}
+                        onChange={val => setFormData({...formData, fullStory: val})}
+                        modules={quillModules}
+                        className="bg-white rounded-xl border overflow-hidden"
+                    />
+                </div>
+            </div>
+          )}
+
+          {activeFormTab === 'Media' && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="space-y-3">
+                    <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Movie Poster (2:3)</label>
+                    <div className="flex gap-2">
+                        <button type="button" onClick={() => setImageSource('url')} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest ${imageSource === 'url' ? 'bg-primary-red text-white' : 'bg-gray-100 text-gray-500'}`}>URL</button>
+                        <button type="button" onClick={() => setImageSource('file')} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest ${imageSource === 'file' ? 'bg-primary-red text-white' : 'bg-gray-100 text-gray-500'}`}>Upload</button>
+                    </div>
+                    {imageSource === 'url' ? (
+                        <input placeholder="Poster URL" className="p-3 border rounded-xl w-full" value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} />
+                    ) : (
+                        <input type="file" onChange={e => setSelectedFile(e.target.files[0])} className="w-full text-xs" />
+                    )}
+                </div>
+                <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Cover Image (16:9)</label>
+                    <input placeholder="Cover Image URL" className="p-3 border rounded-xl" value={formData.coverImage} onChange={e => setFormData({...formData, coverImage: e.target.value})} />
+                </div>
+                <input placeholder="Trailer URL" className="p-3 border rounded-xl w-full" value={formData.trailerUrl} onChange={e => setFormData({...formData, trailerUrl: e.target.value})} />
+                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <div className="flex justify-between items-center mb-4">
+                        <label className="text-[10px] font-black uppercase text-gray-400">Photos Gallery</label>
+                        <button type="button" onClick={() => setFormData({...formData, photos: [...formData.photos, '']})} className="bg-slate-800 text-white p-2 rounded-lg text-xs"><i className="fas fa-plus"></i></button>
+                    </div>
+                    <div className="space-y-3">
+                        {formData.photos?.map((photo, pIdx) => (
+                            <div key={pIdx} className="flex gap-2">
+                                <input placeholder="Photo URL" className="flex-1 p-2 border rounded-lg text-xs" value={photo} onChange={e => { const nP = [...formData.photos]; nP[pIdx] = e.target.value; setFormData({...formData, photos: nP}); }} />
+                                <button type="button" onClick={() => setFormData({...formData, photos: formData.photos.filter((_, i) => i !== pIdx)})} className="text-red-500 p-2"><i className="fas fa-trash"></i></button>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
-          
-          <div className="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
-            <div className="flex justify-between items-center mb-4">
-                <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Cast & Crew Members</h4>
-                <button 
-                    type="button" 
-                    onClick={() => setFormData({...formData, cast: [...formData.cast, { name: '', role: 'Actor', image: '' }]})}
-                    className="text-[10px] font-black uppercase text-white bg-primary-red px-3 py-1 rounded shadow-sm hover:scale-105 transition-transform"
-                >
-                    <i className="fas fa-plus mr-1"></i> Add Member
-                </button>
-            </div>
-            
-            <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                {formData.cast?.length > 0 ? formData.cast.map((member, idx) => (
-                    <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-2 p-3 bg-white rounded-lg border border-slate-100 shadow-sm relative group">
-                        <input 
-                            placeholder="Actor Name" className="p-2 border rounded text-xs" 
-                            value={member.name} onChange={e => {
-                                const newCast = [...formData.cast];
-                                newCast[idx].name = e.target.value;
-                                setFormData({...formData, cast: newCast});
-                            }}
-                        />
-                        <input 
-                            placeholder="Role (e.g. Lead Actor)" className="p-2 border rounded text-xs" 
-                            value={member.role} onChange={e => {
-                                const newCast = [...formData.cast];
-                                newCast[idx].role = e.target.value;
-                                setFormData({...formData, cast: newCast});
-                            }}
-                        />
-                        <div className="flex gap-2">
-                            <input 
-                                placeholder="Image URL" className="p-2 border rounded text-xs flex-1" 
-                                value={member.image} onChange={e => {
-                                    const newCast = [...formData.cast];
-                                    newCast[idx].image = e.target.value;
-                                    setFormData({...formData, cast: newCast});
-                                }}
-                            />
-                            <button 
-                                type="button" 
-                                onClick={() => setFormData({...formData, cast: formData.cast.filter((_, i) => i !== idx)})}
-                                className="text-red-500 hover:bg-red-50 p-2 rounded-md transition-colors"
-                            >
-                                <i className="fas fa-trash-alt"></i>
-                            </button>
-                        </div>
-                    </div>
-                )) : (
-                    <div className="bg-white/50 border-2 border-dashed border-slate-200 p-6 rounded-xl text-center">
-                        <p className="text-[10px] font-black uppercase text-slate-300 tracking-widest leading-relaxed">No cast members added yet.</p>
-                    </div>
-                )}
-            </div>
-          </div>
-          
-            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded border border-gray-200">
-                <h4 className="md:col-span-3 text-xs font-bold uppercase text-gray-400">Box Office Performance</h4>
-                <input 
-                placeholder="Day 1 Collection" className="p-2 border rounded"
-                value={formData.performance?.day1} onChange={e => setFormData({...formData, performance: {...formData.performance, day1: e.target.value}})}
-                />
-                <input 
-                placeholder="Weekend Collection" className="p-2 border rounded"
-                value={formData.performance?.weekend} onChange={e => setFormData({...formData, performance: {...formData.performance, weekend: e.target.value}})}
-                />
-                <input 
-                placeholder="Status (e.g. Blockbuster)" className="p-2 border rounded"
-                value={formData.performance?.status} onChange={e => setFormData({...formData, performance: {...formData.performance, status: e.target.value}})}
-                />
-            </div>
+          )}
 
-          <div className="md:col-span-2 flex gap-2 pt-4">
-            <button type="submit" className="bg-green-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-green-700 transition-all">Save Changes</button>
-            <button type="button" onClick={() => setShowForm(false)} className="bg-gray-100 text-gray-600 px-8 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all">Cancel</button>
+          {activeFormTab === 'Stats' && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input placeholder="Day 1" className="p-3 border rounded-xl" value={formData.performance?.day1} onChange={e => setFormData({...formData, performance: {...formData.performance, day1: e.target.value}})} />
+                    <input placeholder="Weekend" className="p-3 border rounded-xl" value={formData.performance?.weekend} onChange={e => setFormData({...formData, performance: {...formData.performance, weekend: e.target.value}})} />
+                    <input placeholder="Status" className="p-3 border rounded-xl" value={formData.performance?.status} onChange={e => setFormData({...formData, performance: {...formData.performance, status: e.target.value}})} />
+                </div>
+                <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Release Date</label>
+                    <input type="date" className="p-3 border rounded-xl" value={formData.releaseDate ? new Date(formData.releaseDate).toISOString().split('T')[0] : ''} onChange={e => setFormData({...formData, releaseDate: e.target.value})} />
+                </div>
+                <div className="flex flex-col gap-1">
+                    <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Initial Likes</label>
+                    <input type="number" className="p-3 border rounded-xl font-bold" value={formData.likes} onChange={e => setFormData({...formData, likes: parseInt(e.target.value) || 0})} />
+                </div>
+            </div>
+          )}
+
+          {activeFormTab === 'Cast' && (
+            <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <div className="flex justify-between items-center mb-6">
+                        <h4 className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Cast & Crew Members</h4>
+                        <button type="button" onClick={() => setFormData({...formData, cast: [...formData.cast, { name: '', role: 'Actor', image: '' }]})} className="bg-primary-red text-white px-4 py-2 rounded-lg text-[10px] font-black uppercase hover:scale-105 transition-transform"><i className="fas fa-plus"></i></button>
+                    </div>
+                    <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                        {formData.cast?.map((member, cIdx) => (
+                            <div key={cIdx} className="bg-white p-4 rounded-xl border grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <input placeholder="Name" className="p-2 border rounded-lg text-xs" value={member.name} onChange={e => { const nC = [...formData.cast]; nC[cIdx].name = e.target.value; setFormData({...formData, cast: nC}); }} />
+                                <input placeholder="Role" className="p-2 border rounded-lg text-xs" value={member.role} onChange={e => { const nC = [...formData.cast]; nC[cIdx].role = e.target.value; setFormData({...formData, cast: nC}); }} />
+                                <div className="flex gap-1">
+                                    <input placeholder="Photo URL" className="flex-1 p-2 border rounded-lg text-xs" value={member.image} onChange={e => { const nC = [...formData.cast]; nC[cIdx].image = e.target.value; setFormData({...formData, cast: nC}); }} />
+                                    <button type="button" onClick={() => setFormData({...formData, cast: formData.cast.filter((_, i) => i !== cIdx)})} className="text-red-500 p-2"><i className="fas fa-times"></i></button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+          )}
+
+          <div className="flex gap-3 pt-6 border-t">
+            <button type="submit" className="flex-1 bg-green-600 text-white p-4 rounded-2xl font-black uppercase text-xs shadow-lg hover:bg-green-700 transition-all">Submit Movie</button>
+            <button type="button" onClick={resetForm} className="bg-gray-100 text-gray-500 px-8 py-4 rounded-2xl font-black uppercase text-xs hover:bg-gray-200 transition-all">Cancel</button>
           </div>
         </form>
       </Modal>
 
-      <Modal 
-        isOpen={showComments} 
-        onClose={() => { setShowComments(false); setSelectedMovieId(null); }} 
-        title={`Comments: ${selectedMovie?.title}`}
-      >
-        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-          {selectedMovie?.comments?.length > 0 ? (
-            [...selectedMovie.comments]
-              .sort((a, b) => (b.likes || 0) - (a.likes || 0))
-              .map((comment, index) => (
-              <div key={index} className="flex justify-between items-start p-4 bg-gray-50 rounded-xl border border-gray-100 group">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-bold text-slate-800 text-xs">{comment.user}</span>
-                    <span className="text-[10px] text-gray-400 font-bold">{new Date(comment.createdAt).toLocaleDateString()}</span>
-                  </div>
-                  <p className="text-slate-600 text-sm mb-2">{comment.content}</p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase">Likes:</span>
-                    <input 
-                      type="number" 
-                      value={comment.likes || 0} 
-                      onChange={(e) => updateMovieComment(selectedMovie._id, comment._id, { likes: parseInt(e.target.value) || 0 })}
-                      className="w-16 p-1 border rounded text-xs font-bold outline-none focus:ring-1 focus:ring-primary-red/50"
-                    />
-                  </div>
-                </div>
-                <button 
-                  onClick={async () => {
-                    await deleteMovieComment(selectedMovie._id, comment._id);
-                  }}
-                  className="text-red-500 hover:bg-red-50 w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                  title="Delete Comment"
-                >
-                  <i className="fas fa-times"></i>
-                </button>
-              </div>
-            ))
-          ) : (
-            <div className="py-10 text-center text-gray-400 font-bold uppercase tracking-widest text-xs">No comments found</div>
-          )}
-        </div>
-      </Modal>
-
-      <div className="overflow-x-auto border rounded-xl bg-white shadow-sm">
+      <div className="bg-white border rounded-2xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
         <table className="w-full text-left">
           <thead className="bg-gray-50 border-b">
             <tr>
-              <th className="p-4 text-sm font-bold text-text-gray uppercase">Movie</th>
-              <th className="p-4 text-sm font-bold text-text-gray uppercase">Genre</th>
-              <th className="p-4 text-sm font-bold text-text-gray uppercase">Year</th>
-                <th className="p-4 text-sm font-bold text-text-gray uppercase">Rating</th>
-                {user?.role === 'admin' && <th className="p-4 text-sm font-bold text-text-gray uppercase">Author</th>}
-                <th className="p-4 text-sm font-bold text-text-gray uppercase">Likes</th>
-                <th className="p-4 text-sm font-bold text-text-gray uppercase">Actions</th>
+              <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Movie</th>
+              <th className="p-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y">
-            {filteredMovies.map((movie, index) => (
-              <tr key={movie._id || index} className="hover:bg-gray-50 transition-colors">
-                <td className="p-4 flex items-center gap-3">
-                  <div className="relative">
-                    <img src={movie.image} className="w-10 h-14 object-cover rounded shadow-sm" alt="" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-bold text-text-dark">{movie.title}</span>
+          <tbody className="divide-y text-sm">
+            {filteredMovies.map(movie => (
+              <tr key={movie._id} className="hover:bg-slate-50 transition-colors group">
+                <td className="p-4">
+                  <div className="flex items-center gap-4">
+                    <img src={movie.image} className="w-12 h-16 object-cover rounded-lg shadow-sm border" alt="" />
+                    <div>
+                        <div className="font-black text-slate-900 uppercase tracking-tighter">{movie.title}</div>
+                        <div className="text-[10px] font-bold text-gray-400 uppercase italic">Released {movie.year}</div>
+                    </div>
                   </div>
                 </td>
-                <td className="p-4 text-sm text-text-gray">{movie.genre}</td>
-                <td className="p-4 text-sm text-text-gray">{movie.year}</td>
-                 <td className="p-4 text-sm font-bold text-accent-gold">⭐ {movie.rating}</td>
-                 {user?.role === 'admin' && (
-                   <td className="p-4">
-                      <div className="flex flex-col">
-                          <span className="text-[10px] font-black text-primary-red uppercase tracking-widest">{movie.createdBy?.fullName || movie.createdBy?.username || 'System'}</span>
-                          <span className="text-[10px] font-bold text-gray-400">ID: {movie.createdBy?.employeeId || 'N/A'}</span>
-                      </div>
-                    </td>
-                 )}
-                  <td className="p-4 text-sm font-bold text-slate-700">❤️ {movie.likes || 0}</td>
-                 <td className="p-4">
-                   <div className="flex gap-2">
-                    <button 
-                      onClick={() => { setSelectedMovieId(movie._id); setShowComments(true); }}
-                      className="text-gray-600 hover:bg-gray-100 w-8 h-8 rounded-full flex items-center justify-center relative"
-                      title="Manage Comments"
-                    >
-                      <i className="fas fa-comments"></i>
-                      {movie.comments?.length > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-primary-red text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center font-bold font-article-text">
-                          {movie.comments.length}
-                        </span>
-                      )}
-                    </button>
-                    <button onClick={() => handleEdit(movie._id)} className="text-blue-600 hover:bg-blue-50 w-8 h-8 rounded-full flex items-center justify-center"><i className="fas fa-edit"></i></button>
-                    <button onClick={() => deleteMovie(movie._id)} className="text-red-600 hover:bg-red-50 w-8 h-8 rounded-full flex items-center justify-center"><i className="fas fa-trash"></i></button>
-                  </div>
+                <td className="p-4">
+                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button onClick={() => handleEdit(movie._id)} className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center transition-all"><i className="fas fa-edit text-xs"></i></button>
+                        <button onClick={() => deleteMovie(movie._id)} className="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center transition-all"><i className="fas fa-trash text-xs"></i></button>
+                    </div>
                 </td>
               </tr>
             ))}
