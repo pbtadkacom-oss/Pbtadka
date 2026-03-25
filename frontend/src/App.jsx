@@ -37,6 +37,9 @@ import SearchPage from './pages/SearchPage';
 import SportsList from './pages/SportsList';
 import ManageSports from './admin/ManageSports';
 
+import UpcomingList from './pages/UpcomingList';
+import ManageUpcoming from './admin/ManageUpcoming';
+
 import WeatherWidget from './components/WeatherWidget';
 import MarketWidget from './components/MarketWidget';
 import NotFound from './components/NotFound';
@@ -55,7 +58,7 @@ const ProtectedRoute = ({ children }) => {
 
 // Helper for landing page
 const HomePage = () => (
-  <main className="w-[96%] max-w-[1800px] mx-auto px-2 py-8">
+  <main className="page-container py-8">
     <div className="flex flex-col lg:flex-row gap-5">
       <div className="lg:w-[78%] xl:w-[80%]">
         <Hero />
@@ -86,6 +89,7 @@ function App() {
             <Route path="/today-news" element={<TodayNews />} />
             <Route path="/news/:id" element={<NewsDetail />} />
             <Route path="/movies" element={<MovieList />} />
+            <Route path="/upcoming" element={<UpcomingList />} />
             <Route path="/movie/:id" element={<MovieDetail />} />
             <Route path="/actor/:name" element={<ActorDetail />} />
             <Route path="/celebs" element={<CelebList />} />
@@ -110,6 +114,7 @@ function App() {
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="movies" element={<ManageMovies />} />
+            <Route path="upcoming" element={<ManageUpcoming />} />
             <Route path="news" element={<ManageNews />} />
             <Route path="sports" element={<ManageSports />} />
             <Route path="celebs" element={<ManageCelebs />} />

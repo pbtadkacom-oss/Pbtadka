@@ -35,7 +35,7 @@ const NewsDetail = () => {
 
     return (
         <div className="bg-white min-h-screen">
-            <main className="max-w-[1240px] mx-auto px-5 py-8 mt-4">
+            <main className="page-container py-8 mt-4">
                 <div className="flex flex-col lg:flex-row gap-8">
                     
                     <div className="lg:w-[70%] xl:w-[72%] min-w-0">

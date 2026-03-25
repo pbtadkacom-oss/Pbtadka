@@ -24,7 +24,8 @@ const ManageCelebs = () => {
     milestones: [{ year: '', text: '' }],
     stats: { fanBase: '', tours: '', impactScore: '' },
     industry: 'Pollywood',
-    category: 'Actor'
+    category: 'Actor',
+    slug: ''
   });
   const [showForm, setShowForm] = useState(false);
   const [imageSource, setImageSource] = useState('url'); // 'url' or 'file'
@@ -72,7 +73,8 @@ const ManageCelebs = () => {
       milestones: [{ year: '', text: '' }],
       stats: { fanBase: '', tours: '', impactScore: '' },
       industry: 'Pollywood',
-      category: 'Actor'
+      category: 'Actor',
+      slug: ''
     });
     setSelectedFile(null);
     setImageSource('url');
@@ -115,7 +117,8 @@ const ManageCelebs = () => {
                   name: '', image: '', role: '', bio: '', 
                   fullBio: '', 
                   milestones: [{ year: '', text: '' }],
-                  stats: { fanBase: '', tours: '', impactScore: '' }
+                  stats: { fanBase: '', tours: '', impactScore: '' },
+                  slug: ''
                 }); 
               }}
               className="bg-primary-red text-white px-4 py-2 rounded-lg font-bold hover:bg-secondary-red transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-primary-red/20"
@@ -139,6 +142,10 @@ const ManageCelebs = () => {
           <input 
             placeholder="Role" className="p-2 border rounded" required
             value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}
+          />
+          <input 
+            placeholder="URL Slug (e.g. sidhu-moose-wala)" className="p-2 border rounded bg-yellow-50 font-bold col-span-2"
+            value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})}
           />
           <div className="flex gap-2">
             <input 

@@ -33,6 +33,8 @@ const MovieSchema = new mongoose.Schema({
         reports: [{ type: String }],
         createdAt: { type: Date, default: Date.now }
     }],
+    slug: { type: String, unique: true, sparse: true },
+    photos: [{ type: String }],
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });
 

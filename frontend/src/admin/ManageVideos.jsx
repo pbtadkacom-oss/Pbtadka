@@ -27,7 +27,8 @@ const ManageVideos = () => {
         image: '', // Thumbnail URL for YouTube
         description: '',
         publishedAt: 'March 2026',
-        likes: 0
+        likes: 0,
+        slug: ''
     });
     const [videoFile, setVideoFile] = useState(null);
     const [thumbSource, setThumbSource] = useState('url'); // 'url' or 'file'
@@ -83,7 +84,7 @@ const ManageVideos = () => {
     const resetForm = () => {
         setFormData({ 
             title: '', videoUrl: '', videoType: 'youtube', views: '', time: '', image: '',
-            description: '', publishedAt: 'March 2026', likes: 0
+            description: '', publishedAt: 'March 2026', likes: 0, slug: ''
         });
         setVideoFile(null);
         setThumbFile(null);
@@ -103,7 +104,8 @@ const ManageVideos = () => {
             image: video.image,
             description: video.description || '',
             publishedAt: video.publishedAt || 'March 2026',
-            likes: video.likes || 0
+            likes: video.likes || 0,
+            slug: video.slug || ''
         });
         setShowForm(true);
     };
@@ -127,7 +129,7 @@ const ManageVideos = () => {
                             />
                         </div>
                         <button 
-                            onClick={() => { setShowForm(true); setEditingId(null); }}
+                            onClick={() => { setShowForm(true); setEditingId(null); setFormData(prev => ({ ...prev, slug: '' })); }}
                             className="bg-primary-red text-white px-4 py-2 rounded-lg font-bold hover:bg-secondary-red transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-primary-red/20"
                         >
                             <i className="fas fa-plus"></i> <span className="hidden sm:inline">Add Video</span>
@@ -145,6 +147,10 @@ const ManageVideos = () => {
                     <input 
                         placeholder="Video Title" className="p-2 border rounded md:col-span-2" required
                         value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})}
+                    />
+                    <input 
+                        placeholder="URL Slug (e.g. trailer-carry-on-jatta)" className="p-2 border rounded md:col-span-2 bg-yellow-50 font-bold px-3"
+                        value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})}
                     />
                     
                     <div className="md:col-span-2 flex gap-4 p-2 bg-white rounded border border-gray-100">

@@ -15,7 +15,7 @@ const SportsList = () => {
 
   return (
     <div className="bg-gray-50 py-12 min-h-screen">
-        <div className="max-w-[1240px] mx-auto px-5">
+        <div className="page-container">
           <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b-4 border-slate-900 pb-8">
             <div>
               <span className="bg-primary-red text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4 inline-block shadow-lg">Live Coverage</span>

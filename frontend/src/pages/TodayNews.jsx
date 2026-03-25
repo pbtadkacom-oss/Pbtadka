@@ -22,7 +22,7 @@ const TodayNews = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <main className="max-w-[1200px] mx-auto px-5 py-12">
+      <main className="page-container py-12">
         <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">

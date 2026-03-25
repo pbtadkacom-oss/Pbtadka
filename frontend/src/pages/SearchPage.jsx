@@ -42,7 +42,7 @@ const SearchPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-[1240px] mx-auto px-5">
+      <div className="page-container">
         <div className="mb-12">
           <h1 className="text-4xl font-black text-text-dark uppercase tracking-tight italic">
             Search Results for: <span className="text-primary-red">"{query}"</span>

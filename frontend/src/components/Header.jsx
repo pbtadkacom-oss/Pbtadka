@@ -26,6 +26,7 @@ const Header = () => {
     { name: 'HOME', path: '/' },
     { name: 'LATEST', path: '/today-news', badge: 'NEW' },
     { name: 'MOVIES', path: '/movies' },
+    { name: 'UPCOMING', path: '/upcoming' },
     { name: 'CELEBS', path: '/celebs' },
     { name: 'NEWS', path: '/news' },
     { name: 'SPORTS', path: '/sports' },

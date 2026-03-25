@@ -12,7 +12,7 @@ const CelebList = () => {
 
   return (
     <div className="bg-white py-20">
-        <div className="max-w-[1200px] mx-auto px-5">
+        <div className="page-container">
           <div className="flex items-center gap-4 mb-4">
             <div className="w-12 h-1.5 bg-primary-red"></div>
             <span className="font-black text-primary-red uppercase tracking-[0.3em] text-sm">Pollywood Stars</span>

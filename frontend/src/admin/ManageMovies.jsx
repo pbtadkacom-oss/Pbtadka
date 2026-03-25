@@ -24,7 +24,7 @@ const ManageMovies = () => {
     title: '', image: '', rating: '', genre: '', year: '', 
     overview: '', director: '', runtime: '', certification: '', 
     performance: { day1: '', weekend: '', status: '' }, industry: 'Pollywood',
-    fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', cast: []
+    fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', cast: [], slug: ''
   });
   const [showForm, setShowForm] = useState(false);
   const [imageSource, setImageSource] = useState('url'); // 'url' or 'file'
@@ -34,15 +34,11 @@ const ManageMovies = () => {
   const [isCustomIndustry, setIsCustomIndustry] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [selectedMovieId, setSelectedMovieId] = useState(null);
-  const [activeSection, setActiveSection] = useState('all'); // 'all' or 'upcoming'
   const selectedMovie = movies.find(m => m._id === selectedMovieId);
 
-  const filteredMovies = movies
-    .filter(movie => {
-      const isUpcoming = movie.releaseDate && new Date(movie.releaseDate) > new Date();
-      if (activeSection === 'upcoming') return isUpcoming;
-      return true;
-    })
+  const releasedMovies = movies.filter(movie => !movie.releaseDate || new Date(movie.releaseDate) <= new Date());
+
+  const filteredMovies = releasedMovies
     .filter(movie => 
       movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       movie.genre.toLowerCase().includes(searchTerm.toLowerCase())
@@ -76,25 +72,30 @@ const ManageMovies = () => {
     }
 
     if (editingIndex !== null) {
-      await updateMovie(movies[editingIndex]._id, data);
+      await updateMovie(releasedMovies[editingIndex]._id, data);
       setEditingIndex(null);
     } else {
       await addMovie(data);
     }
+    resetForm();
+  };
+
+  const resetForm = () => {
     setFormData({ 
       title: '', image: '', rating: '', genre: '', year: '', 
       overview: '', director: '', runtime: '', certification: '', 
       performance: { day1: '', weekend: '', status: '' }, industry: 'Pollywood',
-      fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', cast: []
+      fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', cast: [], slug: ''
     });
     setSelectedFile(null);
     setImageSource('url');
     setShowForm(false);
   };
 
-  const handleEdit = (index) => {
-    setEditingIndex(index);
-    const movie = movies[index];
+  const handleEdit = (realIndex) => {
+    const movie = movies.find(m => m._id === realIndex);
+    const releasedIdx = releasedMovies.findIndex(m => m._id === realIndex);
+    setEditingIndex(releasedIdx);
     setFormData({
       ...movie,
       performance: movie.performance || { day1: '', weekend: '', status: '' },
@@ -108,7 +109,9 @@ const ManageMovies = () => {
     <div className="space-y-6 relative">
       <div className="sticky top-0 z-30 bg-gray-100/80 backdrop-blur-md pb-4 pt-2 -mt-2">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-          <h2 className="text-xl font-bold text-text-dark">Manage Movies</h2>
+          <h2 className="text-xl font-bold text-text-dark flex items-center gap-2">
+            <i className="fas fa-film text-primary-red"></i> Manage Released Movies
+          </h2>
           <div className="flex flex-wrap w-full md:w-auto gap-2">
             <div className="relative flex-1 md:w-64 flex gap-2">
               <div className="relative flex-1">
@@ -121,9 +124,6 @@ const ManageMovies = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <button className="bg-gray-800 text-white px-3 py-2 rounded-lg font-bold hover:bg-black transition-all text-sm">
-                Search
-              </button>
             </div>
             <div className="flex gap-2">
               <select 
@@ -144,7 +144,7 @@ const ManageMovies = () => {
                     title: '', image: '', rating: '', genre: '', year: '', 
                     overview: '', director: '', runtime: '', certification: '', 
                     performance: { day1: '', weekend: '', status: '' }, industry: 'Pollywood',
-                    fullStory: '', trailerUrl: '', likes: 0, releaseDate: ''
+                    fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', slug: ''
                   }); 
                   setIsCustomIndustry(false);
                 }}
@@ -166,6 +166,10 @@ const ManageMovies = () => {
           <input 
             placeholder="Title" className="p-2 border rounded" required
             value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})}
+          />
+          <input 
+            placeholder="URL Slug (e.g. carry-on-jatta-3)" className="p-2 border rounded bg-yellow-50 font-bold px-3"
+            value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})}
           />
           <div className="md:col-span-2 space-y-2">
             <div className="flex gap-4 mb-2">
@@ -239,7 +243,7 @@ const ManageMovies = () => {
             {isCustomIndustry && (
               <input 
                 placeholder="Type industry name..." 
-                className="p-2 border rounded text-sm focus:ring-2 focus:ring-primary-red/20 outline-none animate-in fade-in slide-in-from-top-1 px-3"
+                className="p-2 border rounded text-sm focus:ring-2 focus:ring-primary-red/20 outline-none px-3"
                 value={formData.industry}
                 onChange={e => setFormData({...formData, industry: e.target.value})}
                 autoFocus
@@ -288,27 +292,20 @@ const ManageMovies = () => {
                 />
             </div>
           </div>
-          <div className="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
-            <h4 className="text-[10px] font-black uppercase text-slate-400 mb-3 tracking-widest">Release Information</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Expected Release Date</label>
-                    <input 
-                        type="date" 
-                        className="p-2 border rounded font-bold text-slate-700 outline-none focus:ring-2 focus:ring-primary-red/20"
-                        value={formData.releaseDate ? new Date(formData.releaseDate).toISOString().split('T')[0] : ''} 
-                        onChange={e => setFormData({...formData, releaseDate: e.target.value})}
-                    />
+          {/* Release Date for released movies is optional or historical */}
+            <div className="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Release Date (Historical)</label>
+                        <input 
+                            type="date" 
+                            className="p-2 border rounded font-bold text-slate-700 outline-none focus:ring-2 focus:ring-primary-red/20"
+                            value={formData.releaseDate ? new Date(formData.releaseDate).toISOString().split('T')[0] : ''} 
+                            onChange={e => setFormData({...formData, releaseDate: e.target.value})}
+                        />
+                    </div>
                 </div>
-                <div className="flex flex-col gap-1">
-                    <label className="text-[10px] font-black text-slate-400 uppercase ml-1">Current Status</label>
-                    <input 
-                        placeholder="e.g. Blockbuster, Trending, Upcoming" className="p-2 border rounded font-bold text-slate-700 outline-none focus:ring-2 focus:ring-primary-red/20"
-                        value={formData.performance?.status} onChange={e => setFormData({...formData, performance: {...formData.performance, status: e.target.value}})}
-                    />
             </div>
-          </div>
-        </div>
           
           <div className="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
             <div className="flex justify-between items-center mb-4">
@@ -324,7 +321,7 @@ const ManageMovies = () => {
             
             <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
                 {formData.cast?.length > 0 ? formData.cast.map((member, idx) => (
-                    <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-2 p-3 bg-white rounded-lg border border-slate-100 shadow-sm relative group animate-in fade-in slide-in-from-top-1">
+                    <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-2 p-3 bg-white rounded-lg border border-slate-100 shadow-sm relative group">
                         <input 
                             placeholder="Actor Name" className="p-2 border rounded text-xs" 
                             value={member.name} onChange={e => {
@@ -361,14 +358,13 @@ const ManageMovies = () => {
                     </div>
                 )) : (
                     <div className="bg-white/50 border-2 border-dashed border-slate-200 p-6 rounded-xl text-center">
-                        <p className="text-[10px] font-black uppercase text-slate-300 tracking-widest leading-relaxed">No cast members added yet.<br/>Click "Add Member" to begin.</p>
+                        <p className="text-[10px] font-black uppercase text-slate-300 tracking-widest leading-relaxed">No cast members added yet.</p>
                     </div>
                 )}
             </div>
           </div>
           
-          {(!formData.releaseDate || new Date(formData.releaseDate) <= new Date()) && (
-            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded border border-gray-200 animate-in fade-in duration-500">
+            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded border border-gray-200">
                 <h4 className="md:col-span-3 text-xs font-bold uppercase text-gray-400">Box Office Performance</h4>
                 <input 
                 placeholder="Day 1 Collection" className="p-2 border rounded"
@@ -383,7 +379,7 @@ const ManageMovies = () => {
                 value={formData.performance?.status} onChange={e => setFormData({...formData, performance: {...formData.performance, status: e.target.value}})}
                 />
             </div>
-          )}
+
           <div className="md:col-span-2 flex gap-2 pt-4">
             <button type="submit" className="bg-green-600 text-white px-8 py-3 rounded-xl font-bold shadow-lg hover:bg-green-700 transition-all">Save Changes</button>
             <button type="button" onClick={() => setShowForm(false)} className="bg-gray-100 text-gray-600 px-8 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all">Cancel</button>
@@ -435,24 +431,6 @@ const ManageMovies = () => {
         </div>
       </Modal>
 
-      <div className="flex gap-2 mb-2 p-1 bg-gray-200/50 rounded-xl w-fit">
-        <button 
-          onClick={() => setActiveSection('all')}
-          className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeSection === 'all' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-        >
-          All Movies
-        </button>
-        <button 
-          onClick={() => setActiveSection('upcoming')}
-          className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all flex items-center gap-2 ${activeSection === 'upcoming' ? 'bg-primary-red text-white shadow-lg shadow-primary-red/20' : 'text-slate-400 hover:text-slate-600'}`}
-        >
-          Upcoming Calendar
-          {movies.filter(m => m.releaseDate && new Date(m.releaseDate) > new Date()).length > 0 && (
-            <span className={`w-2 h-2 rounded-full ${activeSection === 'upcoming' ? 'bg-white animate-pulse' : 'bg-primary-red'}`}></span>
-          )}
-        </button>
-      </div>
-
       <div className="overflow-x-auto border rounded-xl bg-white shadow-sm">
         <table className="w-full text-left">
           <thead className="bg-gray-50 border-b">
@@ -472,15 +450,9 @@ const ManageMovies = () => {
                 <td className="p-4 flex items-center gap-3">
                   <div className="relative">
                     <img src={movie.image} className="w-10 h-14 object-cover rounded shadow-sm" alt="" />
-                    {movie.releaseDate && new Date(movie.releaseDate) > new Date() && (
-                        <div className="absolute -top-1 -left-1 bg-primary-red text-white text-[6px] font-black uppercase px-1 rounded-sm shadow-sm">Upcoming</div>
-                    )}
                   </div>
                   <div className="flex flex-col">
                     <span className="font-bold text-text-dark">{movie.title}</span>
-                    {movie.releaseDate && new Date(movie.releaseDate) > new Date() && (
-                        <span className="text-[9px] font-black text-primary-red uppercase tracking-tighter">Live in Calendar</span>
-                    )}
                   </div>
                 </td>
                 <td className="p-4 text-sm text-text-gray">{movie.genre}</td>
@@ -509,8 +481,8 @@ const ManageMovies = () => {
                         </span>
                       )}
                     </button>
-                    <button onClick={() => handleEdit(index)} className="text-blue-600 hover:bg-blue-50 w-8 h-8 rounded-full"><i className="fas fa-edit"></i></button>
-                    <button onClick={() => deleteMovie(movie._id)} className="text-red-600 hover:bg-red-50 w-8 h-8 rounded-full"><i className="fas fa-trash"></i></button>
+                    <button onClick={() => handleEdit(movie._id)} className="text-blue-600 hover:bg-blue-50 w-8 h-8 rounded-full flex items-center justify-center"><i className="fas fa-edit"></i></button>
+                    <button onClick={() => deleteMovie(movie._id)} className="text-red-600 hover:bg-red-50 w-8 h-8 rounded-full flex items-center justify-center"><i className="fas fa-trash"></i></button>
                   </div>
                 </td>
               </tr>

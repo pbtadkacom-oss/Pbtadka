@@ -18,10 +18,13 @@ const Dashboard = () => {
     updateAnnouncements(updated);
   };
 
+  const releasedMoviesCount = movies.filter(m => !m.releaseDate || new Date(m.releaseDate) <= new Date()).length;
+  const upcomingMoviesCount = movies.filter(m => m.releaseDate && new Date(m.releaseDate) > new Date()).length;
+
   const stats = [
-    { name: 'Total Movies', count: movies.length, icon: 'fas fa-film', color: 'bg-blue-500' },
+    { name: 'Released Movies', count: releasedMoviesCount, icon: 'fas fa-film', color: 'bg-blue-600' },
+    { name: 'Upcoming Movies', count: upcomingMoviesCount, icon: 'fas fa-calendar-alt', color: 'bg-indigo-600' },
     { name: 'News Articles', count: news.length, icon: 'fas fa-newspaper', color: 'bg-red-500' },
-    { name: 'Total Celebs', count: celebs.length, icon: 'fas fa-star', color: 'bg-yellow-500' },
     { name: 'Featured Videos', count: videos.length, icon: 'fas fa-video', color: 'bg-purple-500' },
   ];
 
@@ -68,10 +71,11 @@ const Dashboard = () => {
 
       <h2 className="text-xl font-bold mb-6 text-text-dark">Quick Actions</h2>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
-        <QuickActionLink to="/admin/movies" icon="fas fa-plus-circle" text="Add Movie" color="bg-blue-600" />
+        <QuickActionLink to="/admin/movies" icon="fas fa-film" text="Movies" color="bg-blue-600" />
+        <QuickActionLink to="/admin/upcoming" icon="fas fa-calendar-plus" text="Upcoming" color="bg-indigo-600" />
         <QuickActionLink to="/admin/news" icon="fas fa-edit" text="Post News" color="bg-red-600" />
         <QuickActionLink to="/admin/celebs" icon="fas fa-user-plus" text="Add Celeb" color="bg-yellow-600" />
-        <QuickActionLink to="/admin/videos" icon="fas fa-cloud-upload-alt" text="Upload Video" color="bg-purple-600" />
+        <QuickActionLink to="/admin/videos" icon="fas fa-video" text="Upload Video" color="bg-purple-600" />
         {user?.role === 'admin' && (
           <QuickActionLink to="/admin/users" icon="fas fa-users-cog" text="Users" color="bg-teal-600" />
         )}

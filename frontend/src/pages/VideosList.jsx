@@ -13,7 +13,7 @@ const VideosList = () => {
 
     return (
         <div className="bg-gray-900 py-20 min-h-screen">
-                <div className="max-w-[1200px] mx-auto px-5">
+                <div className="page-container">
                     <div className="flex items-center justify-between mb-12">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-1 bg-red-600"></div>

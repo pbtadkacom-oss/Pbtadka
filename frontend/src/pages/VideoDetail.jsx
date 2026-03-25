@@ -40,7 +40,7 @@ const VideoDetail = () => {
 
     return (
         <div className="bg-white min-h-screen">
-            <main className="max-w-[1240px] mx-auto px-5 py-8 mt-4">
+            <main className="page-container py-8 mt-4">
                 <div className="flex flex-col lg:flex-row gap-8">
                     
                     {/* Main Content (Video & Details) */}

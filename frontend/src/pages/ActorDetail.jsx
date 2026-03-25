@@ -28,7 +28,7 @@ const ActorDetail = () => {
     return (
         <div className="bg-white min-h-screen">
             <div className="bg-slate-900 text-white py-20 px-5">
-                <div className="max-w-[1240px] mx-auto flex flex-col md:flex-row items-center gap-10">
+                <div className="page-container flex flex-col md:flex-row items-center gap-10">
                     <div className="w-40 h-40 md:w-56 md:h-56 rounded-full border-4 border-primary-red p-2 shadow-2xl shrink-0">
                         <img 
                             src={actorInfo?.image || 'https://res.cloudinary.com/dzvk7womv/image/upload/v1711287600/default_actor.jpg'} 
@@ -46,7 +46,7 @@ const ActorDetail = () => {
                 </div>
             </div>
 
-            <main className="max-w-[1240px] mx-auto px-5 py-12">
+            <main className="page-container py-12">
                 <div className="flex items-center gap-3 mb-12">
                     <span className="w-10 h-1.5 bg-primary-red"></span>
                     <h2 className="text-2xl font-black uppercase italic tracking-tighter text-slate-900">Filmography</h2>

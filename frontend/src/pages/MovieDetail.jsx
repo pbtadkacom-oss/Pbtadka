@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import CommentSection from '../components/CommentSection';
+import UpcomingLayout from './UpcomingLayout';
 
 const MovieDetail = () => {
     const { id } = useParams();
@@ -17,9 +18,25 @@ const MovieDetail = () => {
 
     if (!movie) return <div className="p-10 text-center font-bold">Movie not found</div>;
 
+    const isUpcoming = movie.releaseDate && new Date(movie.releaseDate) > new Date();
+
+    if (isUpcoming) {
+        return (
+            <UpcomingLayout 
+                movie={movie} 
+                sidebarNews={sidebarNews} 
+                movies={movies}
+                onAddComment={addMovieComment}
+                onLikeComment={likeMovieComment}
+                onUpdateComment={updateMovieComment}
+                onDeleteComment={deleteMovieComment}
+            />
+        );
+    }
+
     return (
         <div className="bg-white min-h-screen">
-            <main className="max-w-[1240px] mx-auto px-5 py-8 mt-4">
+            <main className="page-container py-8 mt-4">
                 <div className="flex flex-col lg:flex-row gap-8">
                     
                     {/* Main Content (70%) */}

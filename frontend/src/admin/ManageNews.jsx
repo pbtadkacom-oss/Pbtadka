@@ -18,7 +18,7 @@ const ManageNews = () => {
   };
 
   const [editingIndex, setEditingIndex] = useState(null);
-  const [formData, setFormData] = useState({ title: '', image: '', category: '', excerpt: '', date: '', fullStory: '', author: 'Editor Team', likes: 0 });
+  const [formData, setFormData] = useState({ title: '', image: '', category: '', excerpt: '', date: '', fullStory: '', author: 'Editor Team', likes: 0, slug: '' });
   const [imageSource, setImageSource] = useState('url'); // 'url' or 'file'
   const [selectedFile, setSelectedFile] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -64,7 +64,7 @@ const ManageNews = () => {
     } else {
       await addNews(data);
     }
-    setFormData({ title: '', image: '', category: '', excerpt: '', date: '', fullStory: '', author: 'Editor Team', likes: 0 });
+    setFormData({ title: '', image: '', category: '', excerpt: '', date: '', fullStory: '', author: 'Editor Team', likes: 0, slug: '' });
     setSelectedFile(null);
     setImageSource('url');
     setShowForm(false);
@@ -108,7 +108,7 @@ const ManageNews = () => {
                 <option value="title">Title (A-Z)</option>
               </select>
               <button 
-                onClick={() => { setShowForm(true); setEditingIndex(null); setFormData({ title: '', image: '', category: '', excerpt: '', date: '', fullStory: '', author: 'Editor Team', likes: 0 }); }}
+                onClick={() => { setShowForm(true); setEditingIndex(null); setFormData({ title: '', image: '', category: '', excerpt: '', date: '', fullStory: '', author: 'Editor Team', likes: 0, slug: '' }); }}
                 className="bg-primary-red text-white px-4 py-2 rounded-lg font-bold hover:bg-secondary-red transition-all flex items-center gap-2 whitespace-nowrap shadow-lg shadow-primary-red/20"
               >
                 <i className="fas fa-plus"></i> <span className="hidden sm:inline">Add News</span>
@@ -180,6 +180,10 @@ const ManageNews = () => {
           <input 
             placeholder="Published Date/Time (Optional - defaults to now)" className="p-2 border rounded"
             value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})}
+          />
+          <input 
+            placeholder="URL Slug (e.g. carry-on-jatta)" className="p-2 border rounded bg-yellow-50 font-bold"
+            value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})}
           />
           <input 
             placeholder="Author" className="p-2 border rounded"

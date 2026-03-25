@@ -124,3 +124,7 @@ body {
 .text-shadow-premium {
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 0, 0, 0.5);
 }
+
+.page-container {
+  @apply w-[96%] max-w-[1800px] mx-auto px-2;
+}

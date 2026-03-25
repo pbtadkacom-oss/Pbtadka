@@ -18,7 +18,7 @@ const ManageSports = () => {
   };
 
   const [editingIndex, setEditingIndex] = useState(null);
-  const [formData, setFormData] = useState({ title: '', image: '', category: 'SPORTS', excerpt: '', date: '', fullStory: '', author: 'Sports Desk' });
+  const [formData, setFormData] = useState({ title: '', image: '', category: 'SPORTS', excerpt: '', date: '', fullStory: '', author: 'Sports Desk', slug: '' });
   const [imageSource, setImageSource] = useState('url'); // 'url' or 'file'
   const [selectedFile, setSelectedFile] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -65,7 +65,7 @@ const ManageSports = () => {
     } else {
       await addNews(data);
     }
-    setFormData({ title: '', image: '', category: 'SPORTS', excerpt: '', date: '', fullStory: '', author: 'Sports Desk' });
+    setFormData({ title: '', image: '', category: 'SPORTS', excerpt: '', date: '', fullStory: '', author: 'Sports Desk', slug: '' });
     setSelectedFile(null);
     setImageSource('url');
     setShowForm(false);
@@ -78,7 +78,7 @@ const ManageSports = () => {
   };
 
   const resetForm = () => {
-    setFormData({ title: '', image: '', category: 'SPORTS', excerpt: '', date: '', fullStory: '', author: 'Sports Desk' });
+    setFormData({ title: '', image: '', category: 'SPORTS', excerpt: '', date: '', fullStory: '', author: 'Sports Desk', slug: '' });
     setEditingIndex(null);
     setSelectedFile(null);
     setImageSource('url');
@@ -144,6 +144,10 @@ const ManageSports = () => {
           <input 
             placeholder="Match Headline" className="p-3 border rounded-xl md:col-span-2 font-bold focus:ring-2 focus:ring-primary-red/20 outline-none" required
             value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})}
+          />
+          <input 
+            placeholder="URL Slug (e.g. ipl-final-match)" className="p-3 border rounded-xl md:col-span-2 bg-yellow-50 font-bold focus:ring-2 focus:ring-primary-red/20 outline-none"
+            value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})}
           />
           <div className="md:col-span-2 space-y-3">
             <div className="flex gap-4 mb-2">

@@ -25,6 +25,8 @@ const VideoSchema = new mongoose.Schema({
         reports: [{ type: String }],
         createdAt: { type: Date, default: Date.now }
     }],
+    likes: { type: Number, default: 0 },
+    slug: { type: String, unique: true, sparse: true },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });
 

@@ -18,7 +18,7 @@ const NewsList = () => {
 
   return (
     <div className="bg-gray-50 py-12">
-        <div className="max-w-[1200px] mx-auto px-5">
+        <div className="page-container">
           <div className="mb-12">
             <h1 className="text-5xl font-black text-text-dark mb-4">Latest Updates</h1>
             <p className="text-text-gray text-lg mb-10">Fresh news from the heart of Punjabi film industry.</p>
