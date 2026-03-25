@@ -29,7 +29,7 @@ const Hero = () => {
       </div>
       
       {/* Expanded Feature Slider (Full width of Hero container) */}
-      <div className="relative overflow-hidden rounded-3xl bg-slate-900 aspect-[16/9] md:aspect-[21/9] lg:h-[492px] w-full group shadow-2xl">
+      <div className="relative overflow-hidden rounded-3xl bg-slate-900 aspect-[16/10] md:aspect-[21/10] lg:h-[500px] w-full group shadow-2xl">
         {sliderStories.map((story, index) => (
           <Link 
             key={story._id}

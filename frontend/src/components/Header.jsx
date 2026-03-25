@@ -37,7 +37,7 @@ const Header = () => {
 
   return (
     <header className="bg-white">
-      <div className="w-[96%] max-w-[1800px] mx-auto px-5">
+      <div className="page-container">
         <div className="flex justify-between items-center py-4 flex-wrap md:flex-nowrap gap-4">
           <Link to="/" className="no-underline group shrink-0">
             <Logo className="h-10 md:h-16 w-auto" />
@@ -88,7 +88,7 @@ const Header = () => {
           </div>
         </div>
 
-        <nav className={`${isMenuOpen ? 'block' : 'hidden'} md:block bg-slate-900 -mx-5 md:mx-0 rounded-t-xl overflow-hidden`}>
+        <nav className={`${isMenuOpen ? 'block' : 'hidden'} md:block bg-slate-900 -mx-4 md:mx-0 rounded-t-xl overflow-hidden`}>
           <ul className="flex flex-col md:flex-row list-none p-0 m-0">
             {navItems.map((item) => (
               <li key={item.name}>

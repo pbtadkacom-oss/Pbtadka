@@ -24,6 +24,10 @@ const CelebritySchema = new mongoose.Schema({
         reports: [{ type: String }],
         createdAt: { type: Date, default: Date.now }
     }],
+    birthDate: { type: String },
+    birthPlace: { type: String },
+    photos: [{ type: String }],
+    videos: [{ type: String }],
     slug: { type: String, unique: true, sparse: true },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });

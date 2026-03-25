@@ -64,7 +64,7 @@ const WeatherWidget = () => {
     };
 
     return (
-        <div className="relative overflow-hidden rounded-2xl mb-4 shadow-xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 min-h-[180px]">
+        <div className="relative overflow-hidden rounded-2xl shadow-xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 min-h-[180px]">
             {/* Header */}
             <div className="px-4 py-3 border-b border-white/5 bg-white/5 flex justify-between items-center relative z-20">
                 <div className="flex items-center gap-2">
@@ -84,8 +84,8 @@ const WeatherWidget = () => {
             <div className="p-4 relative z-10 flex flex-col justify-center">
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex flex-col">
-                        <div className="text-4xl font-black text-white leading-none tracking-tighter tabular-nums drop-shadow-2xl">
-                            {data.temp}<span className="text-lg font-light opacity-40 ml-1">°</span>
+                        <div className="text-5xl font-black text-white leading-none tracking-tighter tabular-nums drop-shadow-2xl">
+                            {data.temp}<span className="text-xl font-light opacity-40 ml-1">°</span>
                         </div>
                         <div className="mt-1">
                             <span className="text-[9px] font-black uppercase tracking-widest text-primary-red mr-2">{data.condition}</span>
@@ -107,11 +107,11 @@ const WeatherWidget = () => {
                             <div className="text-[10px] font-black text-white">{data.humidity}%</div>
                         </div>
                     </div>
-                    <div className="bg-white/5 rounded-xl p-2 border border-white/5 flex items-center gap-2">
-                        <i className="fas fa-wind text-green-400/50 text-[10px]"></i>
+                    <div className="bg-white/5 rounded-xl p-3 border border-white/5 flex items-center gap-3">
+                        <i className="fas fa-wind text-green-400/50 text-xs"></i>
                         <div>
-                            <div className="text-[7px] uppercase font-black text-white/30 tracking-widest">Wind</div>
-                            <div className="text-[10px] font-black text-white">{data.warning?.split(': ')[1] || 'N/A'}</div>
+                            <div className="text-[8px] uppercase font-black text-white/30 tracking-widest">Wind</div>
+                            <div className="text-xs font-black text-white">{data.warning?.split(': ')[1] || 'N/A'}</div>
                         </div>
                     </div>
                 </div>

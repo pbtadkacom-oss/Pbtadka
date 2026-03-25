@@ -23,6 +23,10 @@ const ManageCelebs = () => {
     fullBio: '', 
     milestones: [{ year: '', text: '' }],
     stats: { fanBase: '', tours: '', impactScore: '' },
+    birthDate: '',
+    birthPlace: '',
+    photos: [''],
+    videos: [''],
     industry: 'Pollywood',
     category: 'Actor',
     slug: ''
@@ -49,7 +53,7 @@ const ManageCelebs = () => {
 
     Object.keys(formData).forEach(key => {
         if (!fieldsToExclude.includes(key)) {
-            if (key === 'milestones' || key === 'stats') {
+            if (['milestones', 'stats', 'photos', 'videos'].includes(key)) {
                 data.append(key, JSON.stringify(formData[key]));
             } else if (key !== 'image' || imageSource === 'url') {
                 data.append(key, formData[key]);
@@ -72,6 +76,10 @@ const ManageCelebs = () => {
       fullBio: '', 
       milestones: [{ year: '', text: '' }],
       stats: { fanBase: '', tours: '', impactScore: '' },
+      birthDate: '',
+      birthPlace: '',
+      photos: [''],
+      videos: [''],
       industry: 'Pollywood',
       category: 'Actor',
       slug: ''
@@ -87,6 +95,10 @@ const ManageCelebs = () => {
       ...celeb,
       milestones: celeb.milestones?.length ? celeb.milestones : [{ year: '', text: '' }],
       stats: celeb.stats || { fanBase: '', tours: '', impactScore: '' },
+      birthDate: celeb.birthDate || '',
+      birthPlace: celeb.birthPlace || '',
+      photos: celeb.photos?.length ? celeb.photos : [''],
+      videos: celeb.videos?.length ? celeb.videos : [''],
       industry: celeb.industry || 'Pollywood',
       category: celeb.category || 'Actor'
     });
@@ -157,6 +169,16 @@ const ManageCelebs = () => {
               value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}
             />
           </div>
+          <div className="flex gap-2">
+            <input 
+              placeholder="Birth Date (e.g. Jan 06, 1984)" className="p-2 border rounded w-1/2"
+              value={formData.birthDate} onChange={e => setFormData({...formData, birthDate: e.target.value})}
+            />
+            <input 
+              placeholder="Birth Place (e.g. Punjab, India)" className="p-2 border rounded w-1/2"
+              value={formData.birthPlace} onChange={e => setFormData({...formData, birthPlace: e.target.value})}
+            />
+          </div>
           <div className="md:col-span-2 space-y-2">
             <div className="flex gap-4 mb-2">
               <button 
@@ -223,6 +245,80 @@ const ManageCelebs = () => {
                 placeholder="Impact Score (e.g. 98%)" className="p-2 border rounded text-sm"
                 value={formData.stats?.impactScore} onChange={e => setFormData({...formData, stats: {...formData.stats, impactScore: e.target.value}})}
               />
+            </div>
+          </div>
+
+          <div className="md:col-span-2 p-4 bg-white rounded border border-gray-200">
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="text-xs font-bold uppercase text-gray-400">Photo Gallery</h4>
+              <button 
+                type="button" 
+                onClick={() => setFormData({...formData, photos: [...formData.photos, '']})}
+                className="text-primary-red text-xs font-bold hover:underline"
+              >
+                + Add Photo URL
+              </button>
+            </div>
+            <div className="space-y-3">
+              {formData.photos.map((p, idx) => (
+                <div key={idx} className="flex gap-2">
+                  <input 
+                    placeholder="Image URL" className="p-2 border rounded flex-1 text-sm"
+                    value={p} onChange={e => {
+                      const newPhotos = [...formData.photos];
+                      newPhotos[idx] = e.target.value;
+                      setFormData({...formData, photos: newPhotos});
+                    }}
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      const newPhotos = formData.photos.filter((_, i) => i !== idx);
+                      setFormData({...formData, photos: newPhotos.length ? newPhotos : ['']});
+                    }}
+                    className="text-gray-400 hover:text-red-500 p-2"
+                  >
+                    <i className="fas fa-times"></i>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="md:col-span-2 p-4 bg-white rounded border border-gray-200">
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="text-xs font-bold uppercase text-gray-400">Video Collection</h4>
+              <button 
+                type="button" 
+                onClick={() => setFormData({...formData, videos: [...formData.videos, '']})}
+                className="text-primary-red text-xs font-bold hover:underline"
+              >
+                + Add Video URL
+              </button>
+            </div>
+            <div className="space-y-3">
+              {formData.videos.map((v, idx) => (
+                <div key={idx} className="flex gap-2">
+                  <input 
+                    placeholder="Video/YouTube URL" className="p-2 border rounded flex-1 text-sm"
+                    value={v} onChange={e => {
+                      const newVideos = [...formData.videos];
+                      newVideos[idx] = e.target.value;
+                      setFormData({...formData, videos: newVideos});
+                    }}
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      const newVideos = formData.videos.filter((_, i) => i !== idx);
+                      setFormData({...formData, videos: newVideos.length ? newVideos : ['']});
+                    }}
+                    className="text-gray-400 hover:text-red-500 p-2"
+                  >
+                    <i className="fas fa-times"></i>
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
 

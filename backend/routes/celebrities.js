@@ -50,6 +50,12 @@ router.post('/', upload.single('image'), async (req, res) => {
     if (typeof celebData.stats === 'string') {
         try { celebData.stats = JSON.parse(celebData.stats); } catch (e) { console.error("Stats parse error:", e); }
     }
+    if (typeof celebData.photos === 'string') {
+        try { celebData.photos = JSON.parse(celebData.photos); } catch (e) { console.error("Photos parse error:", e); }
+    }
+    if (typeof celebData.videos === 'string') {
+        try { celebData.videos = JSON.parse(celebData.videos); } catch (e) { console.error("Videos parse error:", e); }
+    }
 
     const celeb = new Celebrity(celebData);
     try {
@@ -76,6 +82,12 @@ router.put('/:id', upload.single('image'), async (req, res) => {
         }
         if (typeof updateData.stats === 'string') {
             try { updateData.stats = JSON.parse(updateData.stats); } catch (e) { console.error("Stats parse error:", e); }
+        }
+        if (typeof updateData.photos === 'string') {
+            try { updateData.photos = JSON.parse(updateData.photos); } catch (e) { console.error("Photos parse error:", e); }
+        }
+        if (typeof updateData.videos === 'string') {
+            try { updateData.videos = JSON.parse(updateData.videos); } catch (e) { console.error("Videos parse error:", e); }
         }
 
         // Heal corrupted data (remove invalid string entries if passed)

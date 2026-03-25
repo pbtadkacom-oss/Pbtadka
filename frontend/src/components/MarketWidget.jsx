@@ -28,7 +28,7 @@ const MarketWidget = () => {
     if (!data) return null;
 
     return (
-        <div className="relative overflow-hidden rounded-2xl mb-4 shadow-xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 min-h-[180px]">
+        <div className="relative overflow-hidden rounded-2xl shadow-xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 min-h-[180px]">
             {/* Header */}
             <div className="px-4 py-3 border-b border-white/5 bg-white/5 flex justify-between items-center relative z-20">
                 <div className="flex items-center gap-2">
@@ -51,7 +51,7 @@ const MarketWidget = () => {
                                     <span className="text-[7px] font-black bg-white/10 px-1 py-0.5 rounded text-white/50">{item.exchange}</span>
                                     <h4 className="text-[9px] font-black text-white/70 uppercase tracking-tighter">{item.name}</h4>
                                 </div>
-                                <div className="text-lg font-black text-white tracking-tighter tabular-nums drop-shadow-lg">
+                                <div className="text-xl font-black text-white tracking-tighter tabular-nums drop-shadow-lg">
                                     {item.price}
                                 </div>
                             </div>

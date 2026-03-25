@@ -59,8 +59,8 @@ const ProtectedRoute = ({ children }) => {
 // Helper for landing page
 const HomePage = () => (
   <main className="page-container py-8">
-    <div className="flex flex-col lg:flex-row gap-5">
-      <div className="lg:w-[78%] xl:w-[80%]">
+    <div className="flex flex-col lg:flex-row gap-8">
+      <div className="lg:w-[68%] xl:w-[70%] min-w-0">
         <Hero />
         <MovieSlider />
         <MovieCalendar />
@@ -69,7 +69,7 @@ const HomePage = () => (
         <VideoGrid />
       </div>
       
-      <aside className="lg:w-[25%] xl:w-[22%] flex flex-col gap-4 sticky top-[220px] self-start">
+      <aside className="lg:w-[32%] xl:w-[30%] flex flex-col gap-3 sticky top-[220px] self-start">
         <WeatherWidget />
         <MarketWidget />
       </aside>

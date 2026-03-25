@@ -17,10 +17,35 @@ const MovieDetailLayout = ({ movie, sidebarNews, movies, onAddComment, onLikeCom
         setWatchScore(prev => type === 'watch' ? prev + 1 : prev - 1);
     };
 
-    const recentMovies = movies
-        .filter(m => m.releaseDate && new Date(m.releaseDate) <= new Date())
-        .sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate))
-        .slice(0, 6);
+    const getSuggestions = () => {
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+        
+        // Exclude current movie from suggestions
+        const otherMovies = movies.filter(m => m._id !== movie._id);
+        
+        // Tier 1: Movies from the last 30 days
+        const freshMovies = otherMovies.filter(m => {
+            const date = new Date(m.createdAt || m.releaseDate);
+            return date >= oneMonthAgo;
+        });
+
+        // Pick up to 6 random fresh movies
+        let suggested = [...freshMovies].sort(() => 0.5 - Math.random()).slice(0, 6);
+        
+        // Tier 2 Fallback: If less than 6 fresh movies, fill with older ones
+        if (suggested.length < 6) {
+            const olderMovies = otherMovies.filter(m => !freshMovies.some(fm => fm._id === m._id));
+            const fillCount = 6 - suggested.length;
+            const extra = [...olderMovies].sort(() => 0.5 - Math.random()).slice(0, fillCount);
+            suggested = [...suggested, ...extra];
+        }
+        
+        // Final shuffle 
+        return suggested.sort(() => 0.5 - Math.random());
+    };
+
+    const suggestedMovies = getSuggestions();
 
     return (
         <div className="bg-[#f8f9fa] min-h-screen">
@@ -124,36 +149,45 @@ const MovieDetailLayout = ({ movie, sidebarNews, movies, onAddComment, onLikeCom
             <main className="page-container py-12">
                 <div className="flex flex-col lg:flex-row gap-12">
                     
-                    <div className="lg:w-[70%] xl:w-[75%] space-y-16">
+                    <div className="lg:w-[70%] xl:w-[75%] space-y-12">
                         {activeTab === 'Timeline' && (
-                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                <div className="space-y-12">
-                                    <section>
-                                        <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 mb-6 flex items-center gap-3">
-                                            {movie.title} Movie
-                                        </h2>
-                                        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 italic font-medium text-slate-600 leading-relaxed">
-                                            <h3 className="text-sm font-black text-primary-red uppercase tracking-widest mb-4 not-italic">Synopsis</h3>
-                                            <p>{movie.overview}</p>
-                                            {movie.fullStory && (
-                                                <div className="mt-8 pt-8 border-t border-gray-100 rich-text-content not-italic text-sm text-slate-700" dangerouslySetInnerHTML={{ __html: movie.fullStory }} />
-                                            )}
-                                        </div>
-                                    </section>
+                            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-12">
+                                <section>
+                                    <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 mb-6 flex items-center gap-3">
+                                        {movie.title} Movie
+                                    </h2>
+                                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 italic font-medium text-slate-600 leading-relaxed">
+                                        <h3 className="text-sm font-black text-primary-red uppercase tracking-widest mb-4 not-italic">Synopsis</h3>
+                                        <p>{movie.overview}</p>
+                                        {movie.fullStory && (
+                                            <div className="mt-8 pt-8 border-t border-gray-100 rich-text-content not-italic text-sm text-slate-700" dangerouslySetInnerHTML={{ __html: movie.fullStory }} />
+                                        )}
+                                    </div>
+                                </section>
 
-                                    <section id="photos">
-                                        <div className="flex justify-between items-center mb-6">
-                                            <h3 className="text-xl font-black uppercase italic text-slate-900">Photos <span className="text-gray-300 ml-1">({movie.photos?.length || 0})</span></h3>
-                                            <button onClick={() => setActiveTab('Photos')} className="text-primary-red font-black uppercase text-[10px] tracking-widest group">View All <i className="fas fa-chevron-right ml-1 transition-transform group-hover:translate-x-1"></i></button>
-                                        </div>
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                            {(movie.photos?.length > 0 ? movie.photos : [movie.image, movie.coverImage || movie.image]).slice(0, 4).map((p, i) => (
-                                                <div key={i} className={`rounded-xl overflow-hidden aspect-[16/10] shadow-md border-2 border-white ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}>
-                                                    <img src={p} className="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="" />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </section>
+                                <section id="photos">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h3 className="text-xl font-black uppercase italic text-slate-900">Photos <span className="text-gray-300 ml-1">({movie.photos?.length || 0})</span></h3>
+                                        <button onClick={() => setActiveTab('Photos')} className="text-primary-red font-black uppercase text-[10px] tracking-widest group">View All <i className="fas fa-chevron-right ml-1 transition-transform group-hover:translate-x-1"></i></button>
+                                    </div>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        {(movie.photos?.length > 0 ? movie.photos : [movie.image, movie.coverImage || movie.image]).slice(0, 4).map((p, i) => (
+                                            <div key={i} className={`rounded-xl overflow-hidden aspect-[16/10] shadow-md border-2 border-white ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}>
+                                                <img src={p} className="w-full h-full object-cover hover:scale-110 transition-transform duration-700" alt="" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </section>
+
+                                <div className="border-gray-100">
+                                    <CommentSection 
+                                        itemId={movie._id}
+                                        comments={movie.comments}
+                                        onAdd={onAddComment}
+                                        onLike={onLikeComment}
+                                        onUpdate={onUpdateComment}
+                                        onDelete={onDeleteComment}
+                                    />
                                 </div>
                             </div>
                         )}
@@ -192,19 +226,6 @@ const MovieDetailLayout = ({ movie, sidebarNews, movies, onAddComment, onLikeCom
                                 </div>
                             </div>
                         )}
-
-                        {activeTab === 'Timeline' && (
-                            <div className="pt-16 border-t border-gray-100">
-                                <CommentSection 
-                                    itemId={movie._id}
-                                    comments={movie.comments}
-                                    onAdd={onAddComment}
-                                    onLike={onLikeComment}
-                                    onUpdate={onUpdateComment}
-                                    onDelete={onDeleteComment}
-                                />
-                            </div>
-                        )}
                     </div>
 
                     <aside className="lg:w-[30%] xl:w-[25%]">
@@ -212,7 +233,7 @@ const MovieDetailLayout = ({ movie, sidebarNews, movies, onAddComment, onLikeCom
                             <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
                                 <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 pb-4 border-b">Suggested For You</h3>
                                 <div className="grid grid-cols-2 gap-4">
-                                    {recentMovies.map(m => (
+                                    {suggestedMovies.map(m => (
                                         <Link key={m._id} to={`/movie/${m.slug || m._id}`} className="group flex flex-col gap-2 no-underline">
                                             <div className="aspect-[2/3] rounded-lg overflow-hidden shadow-md border-2 border-white group-hover:border-primary-red transition-all duration-300 relative">
                                                 <img src={m.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
