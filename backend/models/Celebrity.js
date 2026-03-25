@@ -10,9 +10,9 @@ const CelebritySchema = new mongoose.Schema({
         { year: { type: String }, text: { type: String } }
     ],
     stats: {
-        fanBase: { type: String },
-        tours: { type: String },
-        impactScore: { type: String }
+        fanBase: { type: String, default: '0' },
+        movieCount: { type: String, default: '0' },
+        nominations: { type: String, default: '0' }
     },
     industry: { type: String, default: 'Pollywood' },
     category: { type: String, default: 'Actor' },

@@ -133,20 +133,20 @@ const CelebDetail = () => {
                                     ))}
                                 </div>
                             ) : (
-                                <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-6 border border-white/10 space-y-4">
-                                    <div className="flex items-center gap-4 text-white/60">
-                                        <i className="fas fa-chart-line text-2xl"></i>
-                                        <div>
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-white/30">Career Ranking</p>
-                                            <p className="text-sm font-black text-white italic">#1 Trending in Pollywood</p>
-                                        </div>
+                                <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10 flex justify-between items-center text-center">
+                                    <div className="flex-1">
+                                        <p className="text-3xl font-black text-white italic tracking-tighter leading-none mb-2">{celeb.stats?.fanBase || '0'}</p>
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Fans</p>
                                     </div>
-                                    <div className="flex items-center gap-4 text-white/60">
-                                        <i className="fas fa-user-friends text-2xl"></i>
-                                        <div>
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-white/30">Engagement</p>
-                                            <p className="text-sm font-black text-white italic">9.8M Daily Interactions</p>
-                                        </div>
+                                    <div className="w-px h-10 bg-white/10"></div>
+                                    <div className="flex-1">
+                                        <p className="text-3xl font-black text-white italic tracking-tighter leading-none mb-2">{celeb.stats?.movieCount || celebMovies.length}</p>
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Movies</p>
+                                    </div>
+                                    <div className="w-px h-10 bg-white/10"></div>
+                                    <div className="flex-1">
+                                        <p className="text-3xl font-black text-white italic tracking-tighter leading-none mb-2">{celeb.stats?.nominations || '0'}</p>
+                                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Noms</p>
                                     </div>
                                 </div>
                             )}

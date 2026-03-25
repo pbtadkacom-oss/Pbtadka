@@ -94,7 +94,7 @@ const ManageCelebs = () => {
     setFormData({
       ...celeb,
       milestones: celeb.milestones?.length ? celeb.milestones : [{ year: '', text: '' }],
-      stats: celeb.stats || { fanBase: '', tours: '', impactScore: '' },
+      stats: celeb.stats || { fanBase: '', movieCount: '', nominations: '' },
       birthDate: celeb.birthDate || '',
       birthPlace: celeb.birthPlace || '',
       photos: celeb.photos?.length ? celeb.photos : [''],
@@ -129,7 +129,7 @@ const ManageCelebs = () => {
                   name: '', image: '', role: '', bio: '', 
                   fullBio: '', 
                   milestones: [{ year: '', text: '' }],
-                  stats: { fanBase: '', tours: '', impactScore: '' },
+                  stats: { fanBase: '', movieCount: '', nominations: '' },
                   birthDate: '',
                   birthPlace: '',
                   photos: [''],
@@ -240,16 +240,16 @@ const ManageCelebs = () => {
             <h4 className="text-xs font-bold uppercase text-gray-400 mb-4">Quick Stats</h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <input 
-                placeholder="Fan Base (e.g. 12M+)" className="p-2 border rounded text-sm"
+                placeholder="Fans (e.g. 1.2M)" className="p-2 border rounded text-sm font-bold"
                 value={formData.stats?.fanBase} onChange={e => setFormData({...formData, stats: {...formData.stats, fanBase: e.target.value}})}
               />
               <input 
-                placeholder="Global Tours (e.g. 15 Nations)" className="p-2 border rounded text-sm"
-                value={formData.stats?.tours} onChange={e => setFormData({...formData, stats: {...formData.stats, tours: e.target.value}})}
+                placeholder="Total Movies (e.g. 42)" className="p-2 border rounded text-sm font-bold"
+                value={formData.stats?.movieCount} onChange={e => setFormData({...formData, stats: {...formData.stats, movieCount: e.target.value}})}
               />
               <input 
-                placeholder="Impact Score (e.g. 98%)" className="p-2 border rounded text-sm"
-                value={formData.stats?.impactScore} onChange={e => setFormData({...formData, stats: {...formData.stats, impactScore: e.target.value}})}
+                placeholder="Nominations (e.g. 98)" className="p-2 border rounded text-sm font-bold"
+                value={formData.stats?.nominations} onChange={e => setFormData({...formData, stats: {...formData.stats, nominations: e.target.value}})}
               />
             </div>
           </div>
