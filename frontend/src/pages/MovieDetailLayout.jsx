@@ -121,7 +121,7 @@ const MovieDetailLayout = ({ movie: propMovie, sidebarNews }) => {
                                                                 if (user) {
                                                                     rateMovie(movie._id, star);
                                                                 } else {
-                                                                    alert("Please log in to rate movies.");
+                                                                    alert("Please log in to rate movies and join the community!");
                                                                 }
                                                             }}
                                                             className="hover:scale-125 transition-transform active:scale-95"

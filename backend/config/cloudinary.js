@@ -10,10 +10,19 @@ cloudinary.config({
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  params: {
-    folder: 'punjabi_film_news',
-    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
-    transformation: [{ width: 1200, height: 800, crop: 'limit' }]
+  params: async (req, file) => {
+    if (file.mimetype && file.mimetype.startsWith('video/')) {
+        return {
+            folder: 'punjabi_film_news/videos',
+            resource_type: 'video',
+            allowed_formats: ['mp4', 'mov', 'avi', 'mkv', 'webm']
+        };
+    }
+    return {
+        folder: 'punjabi_film_news',
+        allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+        transformation: [{ width: 1200, height: 800, crop: 'limit' }]
+    };
   }
 });
 

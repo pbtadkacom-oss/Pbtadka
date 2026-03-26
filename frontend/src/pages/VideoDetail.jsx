@@ -118,7 +118,7 @@ const VideoDetail = () => {
                                     dangerouslySetInnerHTML={{ __html: video.description }} 
                                 />
                             ) : (
-                                <p>Exclusive {video.title} coverage only on Punjabi Film News. Stay updated with the latest in Pollywood entertainment.</p>
+                                <p>Exclusive {video.title} coverage only on our Cinematic Hub. Stay updated with the latest in entertainment world.</p>
                             )}
                         </div>
 

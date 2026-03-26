@@ -4,7 +4,7 @@ import 'react-quill-new/dist/quill.snow.css';
 import { useData } from '../context/DataContext';
 import Modal from '../components/Modal';
 
-const INDUSTRIES = ["Pollywood", "Bollywood", "Hollywood", "Tollywood", "Kollywood", "Mollywood", "Sandalwood", "South Indian", "Haryanvi", "Bhojpuri"];
+const INDUSTRIES = ["Bollywood", "Hollywood", "Tollywood", "Kollywood", "Mollywood", "Sandalwood", "South Indian", "Haryanvi", "Bhojpuri", "Pollywood"];
 
 const ManageMovies = () => {
   const { user, movies, celebs, addMovie, updateMovie, deleteMovie, deleteMovieComment, updateMovieComment } = useData();
@@ -23,7 +23,7 @@ const ManageMovies = () => {
   const [formData, setFormData] = useState({ 
     title: '', image: '', coverImage: '', rating: '', genre: '', year: new Date().getFullYear().toString(), 
     overview: '', director: '', runtime: '', certification: '', 
-    performance: { day1: '', weekend: '', status: 'Blockbuster' }, industry: 'Pollywood',
+    performance: { day1: '', weekend: '', status: 'Blockbuster' }, industry: 'Bollywood',
     fullStory: '', trailerUrl: '', likes: 0, releaseDate: new Date().toISOString().split('T')[0], cast: [], slug: '', photos: []
   });
 
@@ -31,6 +31,8 @@ const ManageMovies = () => {
   const [activeFormTab, setActiveFormTab] = useState('Info'); 
   const [imageSource, setImageSource] = useState('url'); 
   const [selectedFile, setSelectedFile] = useState(null);
+  const [trailerSource, setTrailerSource] = useState('url');
+  const [trailerFile, setTrailerFile] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('newest');
   const [isCustomIndustry, setIsCustomIndustry] = useState(false);
@@ -55,13 +57,13 @@ const ManageMovies = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData();
-    const fieldsToExclude = ['comments', 'createdBy', '_id', 'createdAt', 'updatedAt', '__v'];
+    const fieldsToExclude = ['comments', 'createdBy', '_id', 'createdAt', 'updatedAt', '__v', 'userRatings', 'averageRating', 'totalRatings'];
 
     Object.keys(formData).forEach(key => {
         if (!fieldsToExclude.includes(key)) {
             if (key === 'performance' || key === 'cast' || key === 'photos') {
                 data.append(key, JSON.stringify(formData[key]));
-            } else if (key !== 'image' || imageSource === 'url') {
+            } else if ((key !== 'image' || imageSource === 'url') && (key !== 'trailerUrl' || trailerSource === 'url')) {
                 data.append(key, formData[key]);
             }
         }
@@ -69,6 +71,9 @@ const ManageMovies = () => {
 
     if (imageSource === 'file' && selectedFile) {
         data.append('image', selectedFile);
+    }
+    if (trailerSource === 'file' && trailerFile) {
+        data.append('trailer', trailerFile);
     }
 
     if (editingIndex !== null) {
@@ -83,11 +88,13 @@ const ManageMovies = () => {
     setFormData({ 
       title: '', image: '', coverImage: '', rating: '', genre: '', year: new Date().getFullYear().toString(), 
       overview: '', director: '', runtime: '', certification: '', 
-      performance: { day1: '', weekend: '', status: 'Blockbuster' }, industry: 'Pollywood',
+      performance: { day1: '', weekend: '', status: 'Blockbuster' }, industry: 'Bollywood',
       fullStory: '', trailerUrl: '', likes: 0, releaseDate: new Date().toISOString().split('T')[0], cast: [], slug: '', photos: []
     });
     setSelectedFile(null);
     setImageSource('url');
+    setTrailerFile(null);
+    setTrailerSource('url');
     setShowForm(false);
     setEditingIndex(null);
     setActiveFormTab('Info');
@@ -248,7 +255,19 @@ const ManageMovies = () => {
                     <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Cover Image (16:9)</label>
                     <input placeholder="Cover Image URL" className="p-3 border rounded-xl" value={formData.coverImage} onChange={e => setFormData({...formData, coverImage: e.target.value})} />
                 </div>
-                <input placeholder="Trailer URL" className="p-3 border rounded-xl w-full" value={formData.trailerUrl} onChange={e => setFormData({...formData, trailerUrl: e.target.value})} />
+                
+                <div className="space-y-3">
+                    <label className="text-[10px] font-black uppercase text-gray-400 ml-1">Trailer Video</label>
+                    <div className="flex gap-2">
+                        <button type="button" onClick={() => setTrailerSource('url')} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest ${trailerSource === 'url' ? 'bg-primary-red text-white' : 'bg-gray-100 text-gray-500'}`}>URL</button>
+                        <button type="button" onClick={() => setTrailerSource('file')} className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest ${trailerSource === 'file' ? 'bg-primary-red text-white' : 'bg-gray-100 text-gray-500'}`}>Upload</button>
+                    </div>
+                    {trailerSource === 'url' ? (
+                        <input placeholder="Trailer/YouTube URL" className="p-3 border rounded-xl w-full" value={formData.trailerUrl} onChange={e => setFormData({...formData, trailerUrl: e.target.value})} />
+                    ) : (
+                        <input type="file" accept="video/*" onChange={e => setTrailerFile(e.target.files[0])} className="w-full text-xs p-2 border rounded-xl" />
+                    )}
+                </div>
                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
                     <div className="flex justify-between items-center mb-4">
                         <label className="text-[10px] font-black uppercase text-gray-400">Photos Gallery</label>

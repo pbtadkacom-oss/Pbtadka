@@ -237,7 +237,7 @@ const ManageVideos = () => {
 
                     <div className="flex gap-2">
                         <input 
-                            placeholder="Industry (e.g. Pollywood)" className="p-2 border rounded w-1/2"
+                            placeholder="Industry (e.g. Bollywood)" className="p-2 border rounded w-1/2"
                             value={formData.industry} onChange={e => setFormData({...formData, industry: e.target.value})}
                         />
                         <input 

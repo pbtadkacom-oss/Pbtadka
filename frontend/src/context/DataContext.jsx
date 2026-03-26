@@ -47,10 +47,7 @@ export const DataProvider = ({ children }) => {
       setVideos(videosRes.data);
       
       const savedAnn = localStorage.getItem('pbt_announcements');
-      setAnnouncements(savedAnn ? JSON.parse(savedAnn) : [
-        "Grammy Awards 2026: Kendrick Lamar Shines as Indian Nominees Miss Out on Wins",
-        "Breaking: New Punjabi film 'Purane Yaar' crosses 50 crore in first week"
-      ]);
+      setAnnouncements(savedAnn ? JSON.parse(savedAnn) : []);
     } catch (err) {
       console.error("Error fetching data:", err);
     } finally {
@@ -408,9 +405,9 @@ export const DataProvider = ({ children }) => {
         .map(item => ({ text: item.title, link: `/news/${item._id}` }))
     ];
 
-    if (combinedAnnouncements.length === 0) {
-      combinedAnnouncements.push({ text: "Stay tuned for the latest Punjabi film updates!", link: null });
-    }
+    // if (combinedAnnouncements.length === 0) {
+    //   combinedAnnouncements.push({ text: "Stay tuned for the latest Punjabi film updates!", link: null });
+    // }
 
     if (isLoading) return <Loading />;
 

@@ -4,7 +4,7 @@ import 'react-quill-new/dist/quill.snow.css';
 import { useData } from '../context/DataContext';
 import Modal from '../components/Modal';
 
-const INDUSTRIES = ["Pollywood", "Bollywood", "Hollywood", "Tollywood", "Kollywood", "Mollywood", "Sandalwood", "South Indian", "Haryanvi", "Bhojpuri"];
+const INDUSTRIES = ["Bollywood", "Hollywood", "Tollywood", "Kollywood", "Mollywood", "Sandalwood", "South Indian", "Haryanvi", "Bhojpuri", "Pollywood"];
 
 const ManageUpcoming = () => {
   const { user, movies, addMovie, updateMovie, deleteMovie, deleteMovieComment, updateMovieComment } = useData();
@@ -23,7 +23,7 @@ const ManageUpcoming = () => {
   const [formData, setFormData] = useState({ 
     title: '', image: '', rating: '', genre: '', year: new Date().getFullYear().toString(), 
     overview: '', director: '', runtime: '', certification: '', 
-    performance: { day1: '', weekend: '', status: 'Upcoming' }, industry: 'Pollywood',
+    performance: { day1: '', weekend: '', status: 'Upcoming' }, industry: 'Bollywood',
     fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', cast: [], slug: '', photos: [], coverImage: ''
   });
 
@@ -56,7 +56,7 @@ const ManageUpcoming = () => {
     e.preventDefault();
     
     const data = new FormData();
-    const fieldsToExclude = ['comments', 'createdBy', '_id', 'createdAt', 'updatedAt', '__v'];
+    const fieldsToExclude = ['comments', 'createdBy', '_id', 'createdAt', 'updatedAt', '__v', 'userRatings', 'averageRating', 'totalRatings'];
 
     Object.keys(formData).forEach(key => {
         if (!fieldsToExclude.includes(key)) {
@@ -84,7 +84,7 @@ const ManageUpcoming = () => {
     setFormData({ 
       title: '', image: '', rating: '', genre: '', year: new Date().getFullYear().toString(), 
       overview: '', director: '', runtime: '', certification: '', 
-      performance: { day1: '', weekend: '', status: 'Upcoming' }, industry: 'Pollywood',
+      performance: { day1: '', weekend: '', status: 'Upcoming' }, industry: 'Bollywood',
       fullStory: '', trailerUrl: '', likes: 0, releaseDate: '', cast: [], slug: '', photos: []
     });
     setSelectedFile(null);

@@ -10,6 +10,16 @@ const CelebDetail = () => {
     
     const celeb = celebs.find(item => item._id === id || item.slug === id);
 
+    const formatCount = (num) => {
+        if (num >= 1000000) {
+            return (num / 1000000).toFixed(1) + 'M';
+        }
+        if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'K';
+        }
+        return num;
+    };
+    
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [id]);
@@ -94,7 +104,13 @@ const CelebDetail = () => {
                                 
                                 <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
                                     <button 
-                                        onClick={() => followCeleb(celeb._id)}
+                                        onClick={() => {
+                                            if (user) {
+                                                followCeleb(celeb._id);
+                                            } else {
+                                                alert("Please log in to follow your favorite actors!");
+                                            }
+                                        }}
                                         className={`${celeb.isFollowing ? 'bg-white/20 border-white/40' : 'bg-primary-red shadow-primary-red/40'} text-white px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest hover:scale-105 transition-transform shadow-2xl flex items-center gap-2 border`}
                                     >
                                         <i className={`fas ${celeb.isFollowing ? 'fa-check' : 'fa-plus'}`}></i> {celeb.isFollowing ? 'Following' : 'Follow'}
@@ -137,7 +153,9 @@ const CelebDetail = () => {
                             ) : (
                                 <div className="bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10 flex justify-between items-center text-center">
                                     <div className="flex-1">
-                                        <p className="text-3xl font-black text-white italic tracking-tighter leading-none mb-2">{(celeb.followers?.length || 0) + (celeb.bonusFollowers || 0)}</p>
+                                        <p className="text-3xl font-black text-white italic tracking-tighter leading-none mb-2">
+                                            {formatCount((celeb.followers?.length || 0) + (celeb.bonusFollowers || 0))}
+                                        </p>
                                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Fans</p>
                                     </div>
                                     <div className="w-px h-10 bg-white/10"></div>
@@ -156,15 +174,17 @@ const CelebDetail = () => {
                             {/* Mini Stats Bar */}
                             <div className="grid grid-cols-3 gap-1 pt-4 border-t border-white/10">
                                 <div className="text-center">
-                                    <p className="text-lg font-black text-white leading-none">{(celeb.followers?.length || 0) + (celeb.bonusFollowers || 0)}</p>
+                                    <p className="text-lg font-black text-white leading-none">
+                                        {formatCount((celeb.followers?.length || 0) + (celeb.bonusFollowers || 0))}
+                                    </p>
                                     <p className="text-[8px] font-black uppercase tracking-widest text-white/30 mt-1">Fans</p>
                                 </div>
                                 <div className="text-center">
-                                    <p className="text-lg font-black text-white leading-none">42</p>
+                                    <p className="text-lg font-black text-white leading-none">{celeb.stats?.movieCount || celebMovies.length}</p>
                                     <p className="text-[8px] font-black uppercase tracking-widest text-white/30 mt-1">Movies</p>
                                 </div>
                                 <div className="text-center">
-                                    <p className="text-lg font-black text-white leading-none">98</p>
+                                    <p className="text-lg font-black text-white leading-none">{celeb.stats?.nominations || '0'}</p>
                                     <p className="text-[8px] font-black uppercase tracking-widest text-white/30 mt-1">Noms</p>
                                 </div>
                             </div>

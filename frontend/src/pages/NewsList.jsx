@@ -28,6 +28,7 @@ const NewsList = () => {
               activeFilter={filter} 
               onFilterChange={setFilter} 
               label="Category" 
+              theme="light"
             />
           </div>
           

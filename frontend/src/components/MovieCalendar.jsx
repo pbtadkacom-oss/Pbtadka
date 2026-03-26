@@ -68,7 +68,7 @@ const MovieCalendar = () => {
         <div className="space-y-1">
             <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 bg-primary-red rounded-full animate-pulse shadow-sm shadow-primary-red/50"></span>
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">Pollywood & Beyond</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 italic">Upcoming & Beyond</span>
             </div>
             <h2 className="text-3xl md:text-5xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">
                 Movie <span className="text-primary-red">Calendar</span>

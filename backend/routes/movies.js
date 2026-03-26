@@ -43,10 +43,13 @@ router.get('/', async (req, res) => {
 });
 
 // Create a movie
-router.post('/', upload.single('image'), async (req, res) => {
+router.post('/', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer', maxCount: 1 }]), async (req, res) => {
     const movieData = { ...req.body };
-    if (req.file) {
-        movieData.image = req.file.path;
+    if (req.files && req.files['image']) {
+        movieData.image = req.files['image'][0].path;
+    }
+    if (req.files && req.files['trailer']) {
+        movieData.trailerUrl = req.files['trailer'][0].path;
     }
     if (req.session.user) {
         movieData.createdBy = req.session.user.id;
@@ -73,11 +76,14 @@ router.post('/', upload.single('image'), async (req, res) => {
 });
 
 // Update a movie
-router.put('/:id', upload.single('image'), async (req, res) => {
+router.put('/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'trailer', maxCount: 1 }]), async (req, res) => {
     try {
         const updateData = { ...req.body };
-        if (req.file) {
-            updateData.image = req.file.path;
+        if (req.files && req.files['image']) {
+            updateData.image = req.files['image'][0].path;
+        }
+        if (req.files && req.files['trailer']) {
+            updateData.trailerUrl = req.files['trailer'][0].path;
         }
         if (req.session.user) {
             updateData.createdBy = req.session.user.id;

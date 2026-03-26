@@ -90,10 +90,21 @@ router.put('/:id', upload.single('image'), async (req, res) => {
         if (typeof updateData.videos === 'string') {
             try { updateData.videos = JSON.parse(updateData.videos); } catch (e) { console.error("Videos parse error:", e); }
         }
+        if (typeof updateData.followers === 'string') {
+            try { updateData.followers = JSON.parse(updateData.followers); } catch (e) { console.error("Followers parse error:", e); }
+        }
 
         // Heal corrupted data (remove invalid string entries if passed)
         if (updateData.comments && !Array.isArray(updateData.comments)) {
             delete updateData.comments;
+        }
+        if (updateData.followers && !Array.isArray(updateData.followers)) {
+            delete updateData.followers;
+        }
+
+        // Ensure slug is clean
+        if (updateData.slug) {
+            updateData.slug = updateData.slug.trim().toLowerCase();
         }
 
         const updatedCeleb = await Celebrity.findByIdAndUpdate(req.params.id, updateData, { new: true })

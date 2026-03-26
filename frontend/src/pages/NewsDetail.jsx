@@ -100,7 +100,7 @@ const NewsDetail = () => {
                                             <h4 className="text-[12px] font-black text-slate-800 leading-[1.3] line-clamp-3 group-hover:text-primary-red transition-colors uppercase tracking-tight italic">
                                                 {item.title}
                                             </h4>
-                                            <span className="text-[9px] text-gray-400 font-bold mt-2 uppercase tracking-tighter">Pollywood Update</span>
+                                            <span className="text-[9px] text-gray-400 font-bold mt-2 uppercase tracking-tighter">Cinema Update</span>
                                         </div>
                                     </Link>
                                 ))}

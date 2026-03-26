@@ -20,7 +20,7 @@ const VideosList = () => {
                             <h1 className="text-white text-5xl font-black italic tracking-tighter uppercase">TV & Videos</h1>
                         </div>
                     </div>
-                    <p className="text-gray-400 mb-10 text-lg">Exclusive trailers, interviews, and behind-the-scenes from Pollywood.</p>
+                    <p className="text-gray-400 mb-10 text-lg">Exclusive trailers, interviews, and behind-the-scenes from across the globe.</p>
                     
                     <div className="mb-16">
                         <FilterBar 

@@ -16,7 +16,7 @@ const Footer = () => {
           <div className="footer-column">
             <Logo className="h-20 w-auto items-start mb-6" />
             <p className="text-gray-400 text-sm leading-relaxed mb-5">
-              Your premier destination for Punjabi cinema news, reviews, trailers, and celebrity interviews. Stay updated with everything happening in Pollywood.
+              Your premier destination for cinema news, reviews, trailers, and celebrity interviews. Stay updated with everything happening in the cinematic world.
             </p>
             <div className="flex gap-4">
               <SocialIcon icon="fab fa-facebook-f" />
@@ -41,7 +41,7 @@ const Footer = () => {
           <div className="footer-column">
             <h3 className="text-xl font-bold mb-5 text-accent-gold">Categories</h3>
             <ul className="list-none">
-              <FooterLink text="Pollywood" path="/news" />
+              <FooterLink text="Regional Cinema" path="/news" />
               <FooterLink text="Bollywood" path="/news" />
               <FooterLink text="Hollywood" path="/news" />
               <FooterLink text="Reviews" path="/news" />
@@ -52,7 +52,7 @@ const Footer = () => {
           
           <div className="footer-column">
             <h3 className="text-xl font-bold mb-5 text-accent-gold">Newsletter</h3>
-            <p className="text-gray-400 text-sm mb-5">Subscribe to our newsletter to get daily updates about Punjabi cinema.</p>
+            <p className="text-gray-400 text-sm mb-5">Subscribe to our newsletter to get daily updates about the world of cinema.</p>
             <form className="flex flex-col gap-2.5" onSubmit={handleSubmit}>
               <input 
                 type="email" 
@@ -71,8 +71,8 @@ const Footer = () => {
         </div>
         
         <div className="text-center pt-5 border-t border-white/10 text-gray-500 text-sm flex flex-col sm:flex-row justify-center items-center gap-2">
-          <span>&copy; 2026 PB TADKA. All Rights Reserved. | Designed for Punjabi Cinema Lovers</span>
-          <Link to="/admin/login" className="text-gray-600 hover:text-primary-red transition-colors font-bold ml-2 underline">Admin Login</Link>
+          <span>&copy; 2026 PB TADKA. All Rights Reserved. | Designed for Global Cinema Lovers</span>
+          
         </div>
       </div>
     </footer>

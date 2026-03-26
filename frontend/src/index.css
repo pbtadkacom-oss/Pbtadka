@@ -135,6 +135,13 @@ body {
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
+.glass-panel {
+  @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)];
+}
+
+.text-gradient-red {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-red to-[#ff4d4d];
+}
 
 @keyframes marquee {
   0% { transform: translateX(100%); }
