@@ -28,40 +28,40 @@ const MarketWidget = () => {
     if (!data) return null;
 
     return (
-        <div className="relative overflow-hidden rounded-2xl shadow-xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 min-h-[180px]">
+        <div className="relative overflow-hidden rounded-2xl shadow-xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 min-h-[140px] lg:min-h-[180px]">
             {/* Header */}
-            <div className="px-4 py-3 border-b border-white/5 bg-white/5 flex justify-between items-center relative z-20">
-                <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
-                    <h3 className="text-white font-black text-[10px] tracking-widest uppercase italic">Live Markets</h3>
+            <div className="px-3 py-2 lg:px-4 lg:py-3 border-b border-white/5 bg-white/5 flex justify-between items-center relative z-20">
+                <div className="flex items-center gap-1.5 lg:gap-2">
+                    <div className="w-1.5 h-1.5 lg:w-2 lg:h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
+                    <h3 className="text-white font-black text-[9px] lg:text-[10px] tracking-widest uppercase italic">Live Markets</h3>
                 </div>
-                <span className="text-[8px] text-white/30 font-bold uppercase tracking-widest">Verified</span>
+                <span className="text-[7px] lg:text-[8px] text-white/30 font-bold uppercase tracking-widest">Verified</span>
             </div>
             
             {/* Content */}
             <div className="p-3 space-y-2 relative z-10">
                 {data.map((item, index) => (
-                    <div key={index} className="group relative overflow-hidden bg-white/5 hover:bg-white/10 p-3 rounded-xl border border-white/5 transition-all duration-500">
+                    <div key={index} className="group relative overflow-hidden bg-white/5 hover:bg-white/10 p-2 lg:p-3 rounded-xl border border-white/5 transition-all duration-500">
                         {/* Status Indicating Gradient */}
-                        <div className={`absolute -right-10 -top-10 w-24 h-24 blur-3xl opacity-10 transition-transform duration-1000 group-hover:scale-150 ${item.up ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                        <div className={`absolute -right-10 -top-10 w-20 h-20 lg:w-24 lg:h-24 blur-3xl opacity-10 transition-transform duration-1000 group-hover:scale-150 ${item.up ? 'bg-green-500' : 'bg-red-500'}`}></div>
 
                         <div className="relative z-10 flex justify-between items-center">
                             <div className="flex flex-col">
-                                <div className="flex items-center gap-2 mb-0.5">
-                                    <span className="text-[7px] font-black bg-white/10 px-1 py-0.5 rounded text-white/50">{item.exchange}</span>
-                                    <h4 className="text-[9px] font-black text-white/70 uppercase tracking-tighter">{item.name}</h4>
+                                <div className="flex items-center gap-1.5 lg:gap-2 mb-0.5">
+                                    <span className="text-[6px] lg:text-[7px] font-black bg-white/10 px-1 py-0.5 rounded text-white/50">{item.exchange}</span>
+                                    <h4 className="text-[8px] lg:text-[9px] font-black text-white/70 uppercase tracking-tighter">{item.name}</h4>
                                 </div>
-                                <div className="text-xl font-black text-white tracking-tighter tabular-nums drop-shadow-lg">
+                                <div className="text-lg lg:text-xl font-black text-white tracking-tighter tabular-nums drop-shadow-lg leading-none">
                                     {item.price}
                                 </div>
                             </div>
                             
                             <div className="flex flex-col items-end">
-                                <div className={`flex items-center gap-1 font-black text-xs ${item.up ? 'text-green-400' : 'text-red-400'}`}>
-                                    <i className={`fas ${item.up ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'} text-[10px]`}></i>
+                                <div className={`flex items-center gap-1 font-black text-[10px] lg:text-xs ${item.up ? 'text-green-400' : 'text-red-400'}`}>
+                                    <i className={`fas ${item.up ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'} text-[8px] lg:text-[10px]`}></i>
                                     {item.change}
                                 </div>
-                                <div className="text-[8px] font-bold text-white/20 uppercase mt-0.5 tracking-tighter">
+                                <div className="text-[7px] lg:text-[8px] font-bold text-white/20 uppercase mt-0.5 tracking-tighter">
                                     {item.high} | {item.low}
                                 </div>
                             </div>

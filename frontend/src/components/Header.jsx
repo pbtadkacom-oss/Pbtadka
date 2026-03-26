@@ -38,12 +38,13 @@ const Header = () => {
   return (
     <header className="bg-white">
       <div className="page-container">
-        <div className="flex justify-between items-center py-4 flex-wrap md:flex-nowrap gap-4">
+        <div className="flex justify-between items-center py-4 gap-4">
           <Link to="/" className="no-underline group shrink-0">
-            <Logo className="h-10 md:h-16 w-auto" />
+            <Logo className="h-14 md:h-20 w-auto" />
           </Link>
 
-          <div className="flex items-center gap-4 order-3 md:order-2 w-full md:w-auto mt-4 md:mt-0 justify-between md:justify-end">
+          {/* Desktop Search and User Auth */}
+          <div className="hidden md:flex items-center gap-4 md:order-2 w-auto justify-end">
             <div className="relative group/search">
               <input
                 type="text"
@@ -81,20 +82,22 @@ const Header = () => {
                 Sign In
               </button>
             )}
-
-            <button className="md:hidden text-2xl text-slate-900" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-              <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
-            </button>
           </div>
+
+          {/* Mobile Menu Toggle Button */}
+          <button className="md:hidden text-2xl text-slate-900" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
+          </button>
         </div>
 
-        <nav className={`${isMenuOpen ? 'block' : 'hidden'} md:block bg-slate-900 -mx-4 md:mx-0 rounded-t-xl overflow-hidden`}>
-          <ul className="flex flex-col md:flex-row list-none p-0 m-0">
+        <nav className={`${isMenuOpen ? 'block' : 'hidden'} md:block bg-slate-900 -mx-4 md:mx-0 rounded-t-xl overflow-hidden shadow-2xl transition-all duration-300`}>
+          <ul className="flex flex-col md:flex-row list-none p-0 m-0 md:justify-center md:flex-wrap">
             {navItems.map((item) => (
-              <li key={item.name}>
+              <li key={item.name} className="w-full md:w-auto">
                 <Link 
                   to={item.path} 
-                  className={`block text-white no-underline font-black px-6 py-4 hover:bg-white/10 transition-colors text-[11px] uppercase tracking-widest relative ${location.pathname === item.path ? 'bg-primary-red' : ''}`}
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`block text-white no-underline font-black px-3 md:px-4 lg:px-6 py-4 hover:bg-white/10 transition-colors text-[10px] md:text-[11px] lg:text-xs uppercase tracking-widest relative ${location.pathname === item.path ? 'bg-primary-red' : ''}`}
                 >
                   <div className="flex items-center gap-2">
                     {item.name}
@@ -108,6 +111,49 @@ const Header = () => {
               </li>
             ))}
           </ul>
+
+          {/* Mobile Search and User Auth Container (Moved after videos/nav items) */}
+          <div className="md:hidden p-6 border-t border-white/5 flex flex-col gap-5 bg-slate-900/50 backdrop-blur-xl">
+            <div className="relative group/search w-full">
+              <input
+                type="text"
+                placeholder="Search..."
+                className="w-full py-3.5 px-5 pr-12 border-2 border-white/10 bg-slate-800/50 text-white rounded-2xl focus:border-primary-red outline-none transition-all text-sm font-bold placeholder:text-slate-500"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={handleSearch}
+              />
+              <button onClick={handleSearch} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary-red p-2">
+                <i className="fas fa-search text-lg"></i>
+              </button>
+            </div>
+
+            {user ? (
+              <div className="flex items-center justify-between gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{user.role}</span>
+                  <span className="text-base font-bold text-white tracking-tight">{user.username}</span>
+                </div>
+                <div className="flex gap-2">
+                  {isAdmin && (
+                    <Link to="/admin/dashboard" className="flex items-center justify-center w-11 h-11 bg-primary-red text-white rounded-xl hover:bg-red-600 transition-all shadow-lg shadow-primary-red/20" onClick={() => setIsMenuOpen(false)}>
+                      <i className="fas fa-grid-2"></i>
+                    </Link>
+                  )}
+                  <button onClick={logout} className="flex items-center justify-center w-11 h-11 bg-slate-800 text-white rounded-xl hover:bg-slate-700 transition-all border border-white/10">
+                    <i className="fas fa-sign-out-alt"></i>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button 
+                onClick={() => { setShowUserAuth(true); setIsMenuOpen(false); }}
+                className="bg-primary-red text-white py-4 px-8 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-red-600 transition-all shadow-2xl shadow-primary-red/30 w-full transform active:scale-[0.98]"
+              >
+                Sign In
+              </button>
+            )}
+          </div>
         </nav>
       </div>
 

@@ -53,7 +53,6 @@ const CelebDetail = () => {
                         <div className="w-64 lg:w-80 flex-shrink-0">
                             <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl border-4 border-white/10 relative group">
                                 <img src={celeb.image} alt={celeb.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                                <div className="absolute top-4 left-4 bg-primary-red text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg">Trending #1</div>
                             </div>
                         </div>
 
@@ -351,7 +350,7 @@ const CelebDetail = () => {
                             </div>
                         )}
 
-                        <div className="pt-12 border-t border-gray-100">
+                        <div className=" border-gray-100">
                              <CommentSection 
                                 itemId={celeb._id}
                                 comments={celeb.comments}

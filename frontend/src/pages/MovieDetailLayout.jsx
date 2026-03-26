@@ -49,20 +49,30 @@ const MovieDetailLayout = ({ movie, sidebarNews, movies, onAddComment, onLikeCom
 
     return (
         <div className="bg-[#f8f9fa] min-h-screen">
-            {/* Premium Hero Header */}
-            <div className="relative h-[400px] md:h-[500px] overflow-hidden">
-                {/* Background Image: Cover or Blurred Poster */}
+            {/* Unified Hero Header - Expanded for Mobile */}
+            <div className="relative w-full min-h-[600px] md:h-[550px] flex flex-col justify-end overflow-hidden">
                 <div 
                     className={`absolute inset-0 bg-cover bg-center transition-all duration-1000 ${movie.coverImage ? 'scale-100 brightness-75' : 'scale-110 blur-xl brightness-50'}`}
                     style={{ backgroundImage: `url(${movie.coverImage || movie.image})` }}
                 ></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-[#f8f9fa] via-black/20 to-black/20"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-black/20"></div>
+                <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#f8f9fa] to-transparent z-[1]"></div>
 
-                <div className="page-container relative h-full flex items-end pb-12">
-                    <div className="flex flex-col md:flex-row items-end gap-8 w-full">
-                        {/* Floating Poster */}
-                        <div className="flex flex-col gap-0 group shrink-0">
-                            <div className="relative w-44 md:w-56 aspect-[2/3] rounded-sm overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-2 border-white/20 transform -translate-y-4">
+                <div className="page-container relative h-full flex items-end pb-8 md:pb-12 z-10">
+                    <div className="flex flex-col-reverse md:flex-row items-center md:items-end gap-5 md:gap-12 w-full pt-8 md:pt-0">
+                        
+                        {/* Countdown Sidebar (Middle/Bottom on Mobile - Integrated here for alignment) */}
+                        {isUpcoming && (
+                            <div className="flex md:hidden justify-center w-full my-6">
+                                <div className="scale-90 md:scale-100 origin-center drop-shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+                                    <CountdownTimer targetDate={movie.releaseDate} />
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Floating Poster & Interaction */}
+                        <div className="flex flex-col items-center md:items-start gap-0 shrink-0">
+                            <div className="relative w-48 md:w-56 aspect-[2/3] rounded-sm overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.6)] border-2 border-white/20 transform md:-translate-y-4">
                                 <img src={movie.image} alt={movie.title} className="w-full h-full object-cover" />
                                 <div className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/40 backdrop-blur-md flex items-center justify-center text-white border border-white/20 cursor-pointer hover:bg-primary-red transition-colors">
                                     <i className="fas fa-plus"></i>
@@ -71,37 +81,37 @@ const MovieDetailLayout = ({ movie, sidebarNews, movies, onAddComment, onLikeCom
 
                             {/* Interaction: Voting (Upcoming) or Rating (Released) */}
                             {isUpcoming ? (
-                                <div className="bg-white shadow-xl flex items-stretch border-t-4 border-primary-red overflow-hidden transform -translate-y-4">
-                                    <div className="bg-primary-red/5 px-4 flex flex-col items-center justify-center border-r border-gray-100">
+                                <div className="w-48 md:w-56 bg-white shadow-2xl flex items-stretch border-t-4 border-primary-red overflow-hidden transform md:-translate-y-4">
+                                    <div className="bg-primary-red/5 px-4 flex flex-col items-center justify-center border-r border-gray-100 min-w-[50px]">
                                         <span className="text-2xl font-black text-primary-red italic">{watchScore}</span>
                                     </div>
-                                    <div className="flex-1 flex flex-col p-2 gap-1 justify-center">
+                                    <div className="flex-1 flex flex-col p-1.5 gap-1 justify-center">
                                         <button 
                                             onClick={() => handleVote('watch')}
-                                            className={`flex items-center gap-2 text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded transition-all ${vote === 'watch' ? 'bg-green-500 text-white' : 'hover:bg-green-50 text-green-600'}`}
+                                            className={`flex items-center gap-2 text-[7px] md:text-[9px] font-black uppercase tracking-widest px-2 py-2 rounded transition-all whitespace-nowrap ${vote === 'watch' ? 'bg-green-500 text-white shadow-md' : 'hover:bg-green-50 text-green-600'}`}
                                         >
                                             <i className="fas fa-check-circle"></i> Will Watch
                                         </button>
                                         <button 
                                             onClick={() => handleVote('not')}
-                                            className={`flex items-center gap-2 text-[9px] font-black uppercase tracking-widest px-2 py-1 rounded transition-all ${vote === 'not' ? 'bg-red-500 text-white' : 'hover:bg-red-50 text-red-500'}`}
+                                            className={`flex items-center gap-2 text-[7px] md:text-[9px] font-black uppercase tracking-widest px-2 py-2 rounded transition-all whitespace-nowrap ${vote === 'not' ? 'bg-red-500 text-white shadow-md' : 'hover:bg-red-50 text-red-500'}`}
                                         >
                                             <i className="fas fa-times-circle"></i> Not Interested
                                         </button>
                                     </div>
                                 </div>
                             ) : (
-                                <div className="bg-white shadow-xl p-3 border-t-4 border-primary-red transform -translate-y-4">
+                                <div className="w-48 md:w-56 bg-white shadow-2xl p-3 border-t-4 border-primary-red transform md:-translate-y-4">
                                     <div className="flex flex-col">
-                                        <div className="flex items-center gap-2 mb-1">
+                                        <div className="flex items-center gap-2 mb-1 justify-between">
                                             <span className="text-xl font-black text-slate-900 italic transform -skew-x-12">{movie.rating}/10</span>
-                                            <div className="flex text-yellow-400 text-[10px]">
+                                            <div className="flex text-yellow-400 text-[10px] gap-0.5">
                                                 {[...Array(5)].map((_, i) => (
                                                     <i key={i} className={`fas fa-star ${i < Math.floor(movie.rating/2) ? 'text-yellow-400' : 'text-gray-200'}`}></i>
                                                 ))}
                                             </div>
                                         </div>
-                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none bg-gray-50 px-2 py-1.5 rounded-md border border-gray-100">
+                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none bg-gray-50 px-2 py-2 rounded-md border border-gray-100 text-center">
                                             {movie.likes || 0} User Ratings
                                         </span>
                                     </div>
@@ -109,21 +119,21 @@ const MovieDetailLayout = ({ movie, sidebarNews, movies, onAddComment, onLikeCom
                             )}
                         </div>
 
-                        {/* Title & Info */}
-                        <div className="flex-1 pb-12">
-                            <h1 className="text-4xl md:text-6xl font-black text-white mb-2 drop-shadow-lg tracking-tighter uppercase italic">{movie.title}</h1>
-                            <div className="flex flex-wrap items-center gap-4 text-white font-bold uppercase tracking-widest text-[10px] md:text-xs">
-                                <span>Release date: {new Date(movie.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
-                                <span className="w-1.5 h-1.5 rounded-full bg-primary-red"></span>
-                                <span className="text-primary-red font-black">{movie.industry}</span>
-                                <span className="w-1.5 h-1.5 rounded-full bg-primary-red"></span>
-                                <span>{movie.genre}</span>
+                        {/* Title & Info (Top on Mobile) */}
+                        <div className="flex-1 w-full text-center md:text-left pb-4 md:pb-12">
+                            <h1 className="text-4xl md:text-6xl font-black text-white mb-4 drop-shadow-lg tracking-tighter uppercase italic">{movie.title}</h1>
+                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-y-2 gap-x-4 text-white font-bold uppercase tracking-widest text-[9px] md:text-xs">
+                                <span className="opacity-90">Release date: {new Date(movie.releaseDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary-red shadow-[0_0_10px_rgba(239,68,68,0.5)]"></span>
+                                <span className="text-primary-red font-black tracking-tight">{movie.industry}</span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary-red shadow-[0_0_10px_rgba(239,68,68,0.5)]"></span>
+                                <span className="opacity-90">{movie.genre}</span>
                             </div>
                         </div>
 
-                        {/* Countdown Sidebar (Upcoming Only) */}
+                        {/* Countdown Sidebar (Desktop/Tablet - Top Right) */}
                         {isUpcoming && (
-                            <div className="hidden lg:block absolute top-12 right-0">
+                            <div className="hidden md:block absolute top-12 right-0">
                                 <CountdownTimer targetDate={movie.releaseDate} />
                             </div>
                         )}

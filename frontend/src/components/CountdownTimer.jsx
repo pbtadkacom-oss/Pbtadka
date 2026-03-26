@@ -31,19 +31,19 @@ const CountdownTimer = ({ targetDate }) => {
 
   Object.keys(timeLeft).forEach((interval) => {
     timerComponents.push(
-      <div key={interval} className="flex flex-col items-center bg-black/80 backdrop-blur-md px-3 py-2 min-w-[60px]">
-        <span className="text-xl font-black text-white leading-none">
+      <div key={interval} className="flex flex-col items-center bg-black/60 backdrop-blur-md px-3 py-2 min-w-[55px] md:min-w-[65px] border-x border-white/5 first:border-l-0 last:border-r-0">
+        <span className="text-xl md:text-2xl font-black text-white leading-none tracking-tighter">
             {timeLeft[interval] < 10 ? `0${timeLeft[interval]}` : timeLeft[interval]}
         </span>
-        <span className="text-[8px] font-black uppercase tracking-widest text-gray-400 mt-1">{interval}</span>
+        <span className="text-[7px] md:text-[8px] font-black uppercase tracking-[0.2em] text-primary-red/80 mt-1.5">{interval}</span>
       </div>
     );
   });
 
   return (
-    <div className="flex gap-[2px] rounded-lg overflow-hidden border border-white/10 shadow-2xl">
+    <div className="flex rounded-xl overflow-hidden border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)] bg-slate-900/40 backdrop-blur-sm">
       {timerComponents.length ? timerComponents : (
-        <div className="bg-primary-red px-6 py-2 text-white font-black uppercase tracking-widest text-xs">Released Now!</div>
+        <div className="bg-primary-red px-8 py-3 text-white font-black uppercase tracking-widest text-xs animate-pulse">Released Now!</div>
       )}
     </div>
   );

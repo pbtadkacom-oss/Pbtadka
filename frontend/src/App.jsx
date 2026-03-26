@@ -58,8 +58,14 @@ const ProtectedRoute = ({ children }) => {
 
 // Helper for landing page
 const HomePage = () => (
-  <main className="page-container py-8">
-    <div className="flex flex-col lg:flex-row gap-8">
+  <main className="page-container py-4 lg:py-8">
+    <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+      {/* Mobile Widgets - Shown only on small screens at the top */}
+      <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
+        <WeatherWidget />
+        <MarketWidget />
+      </div>
+
       <div className="lg:w-[68%] xl:w-[70%] min-w-0">
         <Hero />
         <MovieSlider />
@@ -69,7 +75,8 @@ const HomePage = () => (
         <VideoGrid />
       </div>
       
-      <aside className="lg:w-[32%] xl:w-[30%] flex flex-col gap-3 sticky top-[220px] self-start">
+      {/* Desktop Sidebar - Hidden on mobile */}
+      <aside className="hidden lg:flex lg:w-[32%] xl:w-[30%] flex-col gap-3 sticky top-[220px] self-start">
         <WeatherWidget />
         <MarketWidget />
       </aside>

@@ -64,12 +64,12 @@ const WeatherWidget = () => {
     };
 
     return (
-        <div className="relative overflow-hidden rounded-2xl shadow-xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 min-h-[180px]">
+        <div className="relative overflow-hidden rounded-2xl shadow-xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 min-h-[140px] lg:min-h-[180px]">
             {/* Header */}
-            <div className="px-4 py-3 border-b border-white/5 bg-white/5 flex justify-between items-center relative z-20">
-                <div className="flex items-center gap-2">
-                    <i className="fas fa-location-dot text-primary-red text-[9px]"></i>
-                    <h3 className="text-white font-black text-[10px] tracking-widest uppercase italic">{locationName}</h3>
+            <div className="px-3 py-2 lg:px-4 lg:py-3 border-b border-white/5 bg-white/5 flex justify-between items-center relative z-20">
+                <div className="flex items-center gap-1.5 lg:gap-2">
+                    <i className="fas fa-location-dot text-primary-red text-[8px] lg:text-[9px]"></i>
+                    <h3 className="text-white font-black text-[9px] lg:text-[10px] tracking-widest uppercase italic">{locationName}</h3>
                 </div>
                 <button 
                     onClick={handleRefresh}
@@ -81,20 +81,20 @@ const WeatherWidget = () => {
             </div>
 
             {/* Content */}
-            <div className="p-4 relative z-10 flex flex-col justify-center">
-                <div className="flex items-center justify-between gap-4">
+            <div className="p-3 lg:p-4 relative z-10 flex flex-col justify-center">
+                <div className="flex items-center justify-between gap-3 lg:gap-4">
                     <div className="flex flex-col">
-                        <div className="text-5xl font-black text-white leading-none tracking-tighter tabular-nums drop-shadow-2xl">
-                            {data.temp}<span className="text-xl font-light opacity-40 ml-1">°</span>
+                        <div className="text-3xl lg:text-5xl font-black text-white leading-none tracking-tighter tabular-nums drop-shadow-2xl">
+                            {data.temp}<span className="text-lg lg:text-xl font-light opacity-40 ml-0.5 lg:ml-1">°</span>
                         </div>
-                        <div className="mt-1">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-primary-red mr-2">{data.condition}</span>
-                            <span className="text-[9px] font-bold text-white/40 uppercase">Feels {data.feelsLike}°</span>
+                        <div className="mt-1 flex flex-wrap gap-x-2">
+                            <span className="text-[8px] lg:text-[9px] font-black uppercase tracking-widest text-primary-red">{data.condition}</span>
+                            <span className="text-[8px] lg:text-[9px] font-bold text-white/40 uppercase">Feels {data.feelsLike}°</span>
                         </div>
                     </div>
 
-                    <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center p-3 border border-white/10 backdrop-blur-md">
-                        <i className={`fas ${getIcon(data.condition)} text-2xl drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]`}></i>
+                    <div className="w-10 h-10 lg:w-14 lg:h-14 bg-white/5 rounded-xl lg:rounded-2xl flex items-center justify-center p-2 lg:p-3 border border-white/10 backdrop-blur-md">
+                        <i className={`fas ${getIcon(data.condition)} text-lg lg:text-2xl drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]`}></i>
                     </div>
                 </div>
 
